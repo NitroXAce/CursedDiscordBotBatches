@@ -1,5 +1,5 @@
 # Introduction
-Here is some of the most cursed Javascript "flavors" of Discord files as "flavors"!  Over the years I have literally 'handicapped' myself on making discord bots using a specific aspect of javascript.  Some of which renders ``var``, ``let``, and ``const`` useless for assignments.  All of these "flavors" do the exact same thing, but written so differently!
+Here is some of the most cursed Javascript Discord files as "flavors"!  Over the years I have literally 'handicapped' myself on making discord bots using a specific aspect of javascript.  Some of which renders ``var``, ``let``, and ``const`` useless for assignments.  All of these "flavors" do the exact same thing, but written so differently!  With years of "experience", I have crafted some of the most "beautiful" written flavors, where consistency is king, and the points dont matter!
 
 ## CLASS ONLY
 In ``classOnly.js``, the file is basically a middle finger to my former employer who said that classes were the best damned thing ever as it works best with a database platform.  While I hated classes to a T, I left in peaceful terms.  Thus I returned and made... that! "What happens if i neutered myself by making classes everywhere?" Meaning:
