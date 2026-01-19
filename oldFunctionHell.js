@@ -61,7 +61,7 @@ function Editor() {
     //cleanup useless variables with KeepOnly, as empty
     this.stringy = JSON.stringify(this.obj, "", 4);
     this.fs.writeFileSync("./users.json", this.stringy);
-    new KeepOnly(this, ['bool']);
+    new KeepOnly(this, ['bool','obj']);
 }
 
 function Message() {
@@ -83,310 +83,242 @@ function Footer() {
     new KeepOnly(this, ["result"]);
 }
 
-class Commands {
-    ping = class Ping {
-        data = new SlashCommandBuilder()
-            .setName("ping")
-            .setDescription("Replies with Pong!");
-        execute = class Execute {
-            constructor(interaction) {
-                this.interaction = interaction;
-                return new EmbedBuilder()
-                    .setTitle("Pong!")
-                    .setDescription("Pong!")
-                    .setColor("Green");
-            }
-        };
-    };
-    freebie = class Freebie {
-        data = new SlashCommandBuilder()
-            .setName("freebie")
-            .setDescription("Replies with a free item!");
-        execute = class Execute {
-            constructor(interaction) {
-                this.interaction = interaction;
-                this.user = new Editor(
-                    this.interaction.user.id,
-                    class {
-                        constructor(jsonUser) {
-                            this.jsonUser = jsonUser;
-                            this.points = this.jsonUser.points;
-
-                            if (Date.now() > this.jsonUser.freebie + 3600000) {
-                                this.jsonUser.freebie = Date.now();
-                                this.jsonUser.points +=
-                                    Math.round(Math.random() * 1000) + 500;
-                                this.bool = true;
-                            }
-                        }
-                    },
-                );
-
-                return new EmbedBuilder()
-                    .setTitle("Freebie")
-                    .setDescription(
-                        this.user.cb.bool
-                            ? `You earned: ${this.user.cb.jsonUser.points - this.user.cb.points}pts`
-                            : "You already got a free item this hour!",
-                    )
-                    .setColor(this.user.cb.bool ? "Green" : "Red");
-            }
-        };
-    };
-}
-
-function CommandBody() {
-    this.data = arguments[0];
-    this.execute = arguments[1];
-}
-
 function Commands() {
-    this.ping = new CommandBody(
-        new SlashCommandBuilder()
-            .setName("ping")
-            .setDescription("Replies with Pong!"),
-        function(interaction) {
+    function Data(){
+        this.builder = new SlashCommandBuilder();
+        this.result = new this.callback(this.builder);
+        return new KeepOnly(this, ["result"]).result;
+    }
+    this.ping = function Ping() {
+        this.data = new Data(function() {
+            this.builder = arguments[0];
+            return this.builder
+                .setName("ping")
+                .setDescription("Replies with Pong!");
+        });
+        
+        this.execute = function Execute() {
+            this.interaction = arguments[0];
+            new KeepOnly(this, []);
             return new EmbedBuilder()
                 .setTitle("Pong!")
                 .setDescription("Pong!")
-                .setColor("Green")
-                .setTimestamp()
-                .setFooter(new Footer(interaction.time, performance.now()))
-                ;
-        }
-    );
-    this.freebie = new CommandBody(
-        new SlashCommandBuilder()
-            .setName("freebie")
-            .setDescription("Replies with a free item!"),
-        function() {
-            this.interaction = arguments[0];
-            this.user = new Editor(this.interaction.user.id, function() {
-                this.jsonUser = arguments[0];
-                this.points = this.jsonUser.points;
+                .setColor("Green");
+        };
+    };
 
-                if (Date.now() > this.jsonUser.freebie + 3600000) {
-                    this.jsonUser.freebie = Date.now();
-                    this.jsonUser.points +=
-                        Math.round(Math.random() * 1000) + 500;
-                    this.bool = true;
+    this.freebie = function Freebie() {
+        this.data = new Data(function() {
+            this.builder = arguments[0];
+            return this.builder
+                .setName("freebie")
+                .setDescription("Replies with a free item!");
+        });
+        this.execute = function Execute() {
+            this.interaction = arguments[0];
+            this.user = new Editor(
+                this.interaction.user.id,
+                function cb() {
+                    this.jsonUser = arguments[0];
+                    this.points = this.jsonUser.points;
+                    if (Date.now() > this.jsonUser.freebie + 3600000) {
+                        this.jsonUser.freebie = Date.now();
+                        this.jsonUser.points +=
+                            Math.round(Math.random() * 1000) + 500;
+                        this.bool = true;
+                    }
                 }
-                return new KeepOnly(this, ["jsonUser",'bool']);
-            })
+            );
+
+            new KeepOnly(this, ['user']);
 
             return new EmbedBuilder()
                 .setTitle("Freebie")
-                .setDescription()
-        }
-    );
+                .setDescription(
+                    this.user.bool
+                        ? `You earned: ${this.user.obj.points - this.user.obj.points}pts`
+                        : "You already got a free item this hour!",
+                )
+                .setColor(this.user.bool ? "Green" : "Red");
+        };
+    };
 }
 
-import {
-    Client,
-    Collection,
-    GatewayIntentBits,
-    SlashCommandBuilder,
-    EmbedBuilder,
-    Events,
-    REST,
-    Routes,
-} from "discord.js";
-import fs from "fs";
-import webSocket from "ws";
-import tokens from "./config.json" with { type: "json" };
+function Deploy() {
+    this.carry = arguments[0];
+    this.list = this.carry.commandList;
+    this.app = this.carry.clientId;
+    this.guild = this.carry.guildId;
+
+    if (!(this.list && this.app && this.guild)){
+        this.success = false;
+        new KeepOnly(this, ['success']);
+        return this.success;
+    }
+
+    this.djs = require("discord.js");
+    this.tokens = require("./config.json");
+    this.REST = this.djs.REST;
+    this.Routes = this.djs.Routes;
+
+    this.rest = new this.REST(
+        new function() {
+            this.version = "10";
+        }(),
+    ).setToken(this.tokens.djs);
+
+    this.rest
+        .put(
+            this.Routes.applicationGuildCommands(
+                this.app,
+                this.guild,
+            ),
+            new function() {
+                this.commandList = arguments[0];
+                this.body = this.commandList;
+            }(this.list),
+        )
+        .then(function(comms) {
+            console.log(
+                `Successfully reloaded ${comms.length} application (/) commands.`,
+            );
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
+
+    this.success = true;
+    new KeepOnly(this, ['success']);
+    return this.success;
+}
+
+function BotEvents() {
+    this.ready = function Ready() {
+        this.once = true;
+        this.name = "ready";
+        this.execute = function Execute() {
+            this.client = arguments[0];
+            console.log(`Logged in as ${this.client.user.tag}`);
+            return new KeepOnly(this, []);
+        };
+    };
+    this.interactionCreate = function InteractionCreate() {
+        this.name = "interactionCreate";
+        this.execute = function Execute() {
+            this.interaction = arguments[0];
+            if (!this.interaction.isChatInputCommand()) return;
+            if (!(this.interaction.commandName in new Commands())) return;
+
+            this.embeds = new new new Commands()
+                [this.interaction.commandName]()
+                .execute(this.interaction);
+
+            this.interaction
+                .reply(new Message(
+                    this.embeds
+                        .setTimestamp()
+                        .setFooter(new Footer(
+                            this.interaction.time,
+                            performance.now(),
+                        ))
+                ))
+                .catch(function() {
+                    this.error = arguments[0];
+                    this.err = new Message(
+                        new EmbedBuilder()
+                            .setTitle("Error")
+                            .setDescription(this.error.toString())
+                            .setColor("Red")
+                            .setTimestamp()
+                            .setFooter(
+                                new Footer(
+                                    this.interaction.time,
+                                    performance.now(),
+                                ),
+                            ),
+                    );
+                    if (
+                        this.interaction.replied ||
+                        this.interaction.deferred
+                    )
+                        return this.interaction.followUp(this.err);
+                    else return this.interaction.reply(this.err);
+                });
+        };
+    };
+}
+
+new function Main(){
+    //importing modules
+    this.fs = require("fs");
+    this.webSocket = require("ws");
+    this.tokens = require("./config.json");
+    this.djs = {};
+    for(this.key in require('discord.js'))
+        this.djs[this.key] = require('discord.js')[this.key];
+    this.djs = new KeepOnly(this.djs, [
+        "Client",
+        "Collection",
+        "GatewayIntentBits",
+        "SlashCommandBuilder",
+        "EmbedBuilder",
+        "Events",
+        "REST",
+        "Routes",
+    ]);
+
+    
+    this.commandList = [];
+    this.clientId = "763924189374840892";
+    this.guildId = "1219483237139746896";
+
+    //begin unpacking the client
+    this.client = new this.djs.Client(
+        new function Intents(){
+            this.djs = arguments[0];
+            this.intents = [this.djs.GatewayIntentBits.Guilds];
+            return new KeepOnly(this, ['intents']).intents;
+        }(this.djs),
+    );
+
+    //init the commands collection
+    this.client.commands = new this.djs.Collection();
+
+    //command initializers to discordjs api
+    for (this.commandUse in new Commands()) {
+        this.command = new new Commands()[this.commandUse]();
+        if ("data" in this.command)
+            if ("execute" in this.command) {
+                this.client.commands.set(
+                    this.command.data.name,
+                    this.command,
+                );
+            }
+    }
+
+    //event initializer to start bot with
+    for (this.eventUse in new BotEvents()) {
+        this.event = new new BotEvents()[this.eventUse]();
+        if (this.event.once)
+            this.client.once(this.event.name, (...args) => {
+                new new new BotEvents()[this.eventUse]().execute(...args);
+            });
+        else
+            this.client.on(this.event.name, (...args) => {
+                args[0].time = performance.now();
+                new new new BotEvents()[this.eventUse]().execute(...args);
+            });
+    }
+
+    //client token
+    this.client.login(this.tokens.djs);
+
+    return new KeepOnly(this, []);
+
+}
+
 
 class Twitch { }
-
-//Json editor for player files
-class Editor {
-    constructor(user, Callback) {
-        this.user = user;
-        this.obj = JSON.parse(fs.readFileSync("./users.json"));
-
-        if (!(this.user in this.obj))
-            this.obj[this.user] = new (class {
-                points = 0;
-                chat = 0;
-                freebie = 0;
-            })();
-
-        this.cb = new Callback(this.obj[this.user]);
-        this.stringy = JSON.stringify(this.obj, "", 4);
-
-        fs.writeFileSync("./users.json", this.stringy);
-    }
-}
-
-//message events starts before all other events
-class Message {
-    ephemeral = true;
-    content = "";
-    constructor(embeds) {
-        this.embeds = [embeds];
-    }
-}
-
-//footer for all embeds
-class Footer {
-    constructor(timeBegin, timeEnd) {
-        return new (class {
-            constructor(timeSolved) {
-                this.text = `Request done in ${Math.ceil(timeSolved * 1000) / 1000}ms`;
-                this.iconURL = "https://tenor.com/view/clock-gif-14609778";
-            }
-        })(timeEnd - timeBegin);
-    }
-}
-
-//all important commands are created here
-class Commands {
-    ping = class Ping {
-        data = new SlashCommandBuilder()
-            .setName("ping")
-            .setDescription("Replies with Pong!");
-        execute = class Execute {
-            constructor(interaction) {
-                this.interaction = interaction;
-                return new EmbedBuilder()
-                    .setTitle("Pong!")
-                    .setDescription("Pong!")
-                    .setColor("Green");
-            }
-        };
-    };
-    freebie = class Freebie {
-        data = new SlashCommandBuilder()
-            .setName("freebie")
-            .setDescription("Replies with a free item!");
-        execute = class Execute {
-            constructor(interaction) {
-                this.interaction = interaction;
-                this.user = new Editor(
-                    this.interaction.user.id,
-                    class {
-                        constructor(jsonUser) {
-                            this.jsonUser = jsonUser;
-                            this.points = this.jsonUser.points;
-
-                            if (Date.now() > this.jsonUser.freebie + 3600000) {
-                                this.jsonUser.freebie = Date.now();
-                                this.jsonUser.points +=
-                                    Math.round(Math.random() * 1000) + 500;
-                                this.bool = true;
-                            }
-                        }
-                    },
-                );
-
-                return new EmbedBuilder()
-                    .setTitle("Freebie")
-                    .setDescription(
-                        this.user.cb.bool
-                            ? `You earned: ${this.user.cb.jsonUser.points - this.user.cb.points}pts`
-                            : "You already got a free item this hour!",
-                    )
-                    .setColor(this.user.cb.bool ? "Green" : "Red");
-            }
-        };
-    };
-}
-
-class Deploy {
-    constructor(carry) {
-        this.list = carry.commandList;
-        this.app = carry.clientId;
-        this.guild = carry.guildId;
-
-        if (this.list && this.app && this.guild) {
-            this.rest = new REST(
-                new (class {
-                    version = "10";
-                })(),
-            ).setToken(tokens.djs);
-
-            this.rest
-                .put(
-                    Routes.applicationGuildCommands(
-                        this.app,
-                        this.guild,
-                    ),
-                    new (class {
-                        constructor(commandList) {
-                            this.body = commandList;
-                        }
-                    })(this.list),
-                )
-                .then(function(comms) {
-                    console.log(
-                        `Successfully reloaded ${comms.length} application (/) commands.`,
-                    );
-                })
-                .catch(console.log);
-
-            return true;
-        }
-    }
-}
-
-//events the bot needs to run
-class BotEvents {
-    ready = class Ready {
-        once = true;
-        name = Events.ClientReady;
-        execute = class Execute {
-            constructor(client) {
-                this.client = client;
-            }
-        };
-    };
-    interactionCreate = class InteractionCreate {
-        name = Events.InteractionCreate;
-        execute = class Execute {
-            constructor(interaction) {
-                this.interaction = interaction;
-
-                if (this.interaction.isChatInputCommand())
-                    if (this.interaction.commandName in new Commands()) {
-                        this.embeds = new new new Commands()
-                        [this.interaction.commandName]()
-                            .execute(this.interaction);
-
-                        this.interaction
-                            .reply(new Message(
-                                this.embeds
-                                    .setTimestamp()
-                                    .setFooter(new Footer(
-                                        this.interaction.time,
-                                        performance.now(),
-                                    ))
-                            ))
-                            .catch(function(error) {
-                                this.err = new Message(
-                                    new EmbedBuilder()
-                                        .setTitle("Error")
-                                        .setDescription(error.toString())
-                                        .setColor("Red")
-                                        .setTimestamp()
-                                        .setFooter(
-                                            new Footer(
-                                                this.interaction.time,
-                                                performance.now(),
-                                            ),
-                                        ),
-                                );
-
-                                if (
-                                    this.interaction.replied ||
-                                    this.interaction.deferred
-                                )
-                                    return this.interaction.followUp(this.err);
-                                else return this.interaction.reply(this.err);
-                            });
-                    }
-            }
-        };
-    };
-}
 
 //self invoked class firing event IICE
 new (class Main {

@@ -1,7 +1,7 @@
 # Introduction
 Here is some of the most cursed Javascript Discord files as "flavors"!  Over the years I have literally 'handicapped' myself on making discord bots using a specific aspect of javascript.  Some of which renders ``var``, ``let``, and ``const`` useless for assignments.  All of these "flavors" do the exact same thing, but written so differently!  With years of "experience", I have crafted some of the most "beautiful" written flavors, where consistency is king, and the points dont matter!
 
-## CLASS ONLY
+## CLASS ONLY (works in full)
 In ``classOnly.js``, the file is basically a middle finger to my former employer who said that classes were the best damned thing ever as it works best with a database platform.  While I hated classes to a T, I left in peaceful terms.  Thus I returned and made... that! "What happens if i neutered myself by making classes everywhere?" Meaning:
  - no methods, must class!
  - no function callbacks, must class instead?!
@@ -24,4 +24,4 @@ What I often hear when sharing this "beautiful" knowledge from various users is:
  - "Why are you doing this?!"
  - "What real world usage is this for?"
 
-To which I reply `"Good"`, and `"Because it simply works!"` because I am a curious Javascript developer, testing edge cases since I was younger, while I dont have ANY SINGLE EXPERIENCE IN TECH! I am however, just a paid factory laborer while fixing boats on the side.  I do this for fun first, and monetary value last.  My goal is to make people THINK about odd, out of the box thinking and how to impliment these cool ideas!  Even then, be consistent in writing styles so no one gets confused!  I am Gareth (a vtuber "Ace Tributon"), and I am glad to have blessed your eyeballs today!  Take your time to have a bit of therapy, some milk, and touch some grass!  Because I wont stop at just javascript...  Enjoy! >:3
+To which I reply "Good", and "Because it simply works!" because I am a curious Javascript developer, testing edge cases since I was younger, while I dont have ANY SINGLE EXPERIENCE IN TECH! I am however, just a paid factory laborer while fixing boats on the side.  I do this for fun first, and monetary value last.  My goal is to make people THINK about odd, out of the box thinking and how to impliment these cool ideas!  Even then, be consistent in writing styles so no one gets confused!  I am Gareth (a vtuber "Ace Tributon"), and I am glad to have blessed your eyeballs today!  Take your time to have a bit of therapy, some milk, and touch some grass!  Because I wont stop at just javascript...  Enjoy! >:3
