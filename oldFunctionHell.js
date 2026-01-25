@@ -18,14 +18,14 @@ function KeepOnly() {
     return this.result;
 }
 
-function MergeObj(){
+function MergeObj() {
     this.parent = arguments[0];
     this.modify = arguments[1];
     this.keepMethods = [];
-    for (this.i in this.parent){
+    for (this.i in this.parent) {
         this.keepMethods[this.keepMethods.length] = this.i;
-        for(this.j in this.modify)
-            if(this.i == this.j)
+        for (this.j in this.modify)
+            if (this.i == this.j)
                 this.parent[this.i] = this.modify[this.i];
     }
     this.return = new KeepOnly(this.parent, this.keepMethods);
@@ -37,14 +37,14 @@ function Editor() {
     this.callback = arguments[1];
     this.fs = require("fs");
     this.obj = JSON.parse(fs.readFileSync("./users.json"));
-    if (typeof this.obj[this.user] == "undefined") {
-        this.obj[this.user] = new function() {
+    if (typeof this.obj[this.user] == "undefined")
+        this.obj[this.user] = new function () {
             this.points = 0;
             this.chat = 0;
             this.freebie = 0;
         }();
-    }
-    //gatther the callback "object"
+
+    //gather the callback "object"
     //filter uneccesary properties
     //gather edited properties from callback to the json user
     this.userObj = new this.callback(this.obj[this.user]);
@@ -61,7 +61,7 @@ function Editor() {
     //cleanup useless variables with KeepOnly, as empty
     this.stringy = JSON.stringify(this.obj, "", 4);
     this.fs.writeFileSync("./users.json", this.stringy);
-    new KeepOnly(this, ['bool','obj']);
+    new KeepOnly(this, ['bool', 'obj']);
 }
 
 function Message() {
@@ -73,10 +73,11 @@ function Message() {
 function Footer() {
     this.timeBegin = arguments[0];
     this.timeEnd = arguments[1];
-    this.result = new function() {
+    this.result = new function () {
         this.self = arguments[0];
-        this.text = `Request done in ${Math.ceil((this.self.timeEnd - this.self.timeBegin) * 1000) / 1000
-            }ms`;
+        this.text = `Request done in ${
+            Math.ceil((this.self.timeEnd - this.self.timeBegin) * 1000) / 1000
+        }ms`;
         this.iconURL = "https://tenor.com/view/clock-gif-14609778";
         delete this.self;
     }(this);
@@ -84,19 +85,11 @@ function Footer() {
 }
 
 function Commands() {
-    function Data(){
-        this.builder = new SlashCommandBuilder();
-        this.result = new this.callback(this.builder);
-        return new KeepOnly(this, ["result"]).result;
-    }
     this.ping = function Ping() {
-        this.data = new Data(function() {
-            this.builder = arguments[0];
-            return this.builder
-                .setName("ping")
-                .setDescription("Replies with Pong!");
-        });
-        
+        this.data = new SlashCommandBuilder()
+            .setName("ping")
+            .setDescription("Replies with Pong!");
+
         this.execute = function Execute() {
             this.interaction = arguments[0];
             new KeepOnly(this, []);
@@ -108,12 +101,10 @@ function Commands() {
     };
 
     this.freebie = function Freebie() {
-        this.data = new Data(function() {
-            this.builder = arguments[0];
-            return this.builder
-                .setName("freebie")
-                .setDescription("Replies with a free item!");
-        });
+        this.data = new SlashCommandBuilder()
+            .setName("freebie")
+            .setDescription("Replies with a free item!");
+
         this.execute = function Execute() {
             this.interaction = arguments[0];
             this.user = new Editor(
@@ -150,7 +141,7 @@ function Deploy() {
     this.app = this.carry.clientId;
     this.guild = this.carry.guildId;
 
-    if (!(this.list && this.app && this.guild)){
+    if (!(this.list && this.app && this.guild)) {
         this.success = false;
         new KeepOnly(this, ['success']);
         return this.success;
@@ -162,7 +153,7 @@ function Deploy() {
     this.Routes = this.djs.Routes;
 
     this.rest = new this.REST(
-        new function() {
+        new function () {
             this.version = "10";
         }(),
     ).setToken(this.tokens.djs);
@@ -173,17 +164,17 @@ function Deploy() {
                 this.app,
                 this.guild,
             ),
-            new function() {
+            new function () {
                 this.commandList = arguments[0];
                 this.body = this.commandList;
             }(this.list),
         )
-        .then(function(comms) {
+        .then(function (comms) {
             console.log(
                 `Successfully reloaded ${comms.length} application (/) commands.`,
             );
         })
-        .catch(function(err) {
+        .catch(function (err) {
             console.log(err);
         });
 
@@ -222,7 +213,7 @@ function BotEvents() {
                             performance.now(),
                         ))
                 ))
-                .catch(function() {
+                .catch(function () {
                     this.error = arguments[0];
                     this.err = new Message(
                         new EmbedBuilder()
@@ -248,13 +239,13 @@ function BotEvents() {
     };
 }
 
-new function Main(){
+new function Main() {
     //importing modules
     this.fs = require("fs");
     this.webSocket = require("ws");
     this.tokens = require("./config.json");
     this.djs = {};
-    for(this.key in require('discord.js'))
+    for (this.key in require('discord.js'))
         this.djs[this.key] = require('discord.js')[this.key];
     this.djs = new KeepOnly(this.djs, [
         "Client",
@@ -267,14 +258,14 @@ new function Main(){
         "Routes",
     ]);
 
-    
+
     this.commandList = [];
     this.clientId = "763924189374840892";
     this.guildId = "1219483237139746896";
 
     //begin unpacking the client
     this.client = new this.djs.Client(
-        new function Intents(){
+        new function Intents() {
             this.djs = arguments[0];
             this.intents = [this.djs.GatewayIntentBits.Guilds];
             return new KeepOnly(this, ['intents']).intents;
@@ -288,13 +279,16 @@ new function Main(){
     for (this.commandUse in new Commands()) {
         this.command = new new Commands()[this.commandUse]();
         if ("data" in this.command)
-            if ("execute" in this.command) {
+            if ("execute" in this.command)
                 this.client.commands.set(
                     this.command.data.name,
                     this.command,
                 );
-            }
     }
+
+    //deploying datas from commands to the discordjs api
+    this.deployCreds = new KeepOnly(this, ['commandList', 'clientId', 'guildId']);
+    if (!new Deploy(this.deployCreds)) throw new Error("Failed to deploy commands");
 
     //event initializer to start bot with
     for (this.eventUse in new BotEvents()) {
@@ -318,54 +312,5 @@ new function Main(){
 }
 
 
-class Twitch { }
-
-//self invoked class firing event IICE
-new (class Main {
-    commands = new Commands();
-    commandList = [];
-    clientId = "763924189374840892";
-    guildId = "1219483237139746896";
-    //events = new Events();
-    client = new Client(
-        new (class Intents {
-            intents = [GatewayIntentBits.Guilds];
-        })(),
-    );
-    constructor() {
-        this.client.commands = new Collection();
-
-        //command initializers to discordjs api
-        for (const commandUse in new Commands()) {
-            this.command = new new Commands()[commandUse]();
-            if ("data" in this.command)
-                if ("execute" in this.command) {
-                    this.commandList.push(this.command.data.toJSON());
-                    this.client.commands.set(
-                        this.command.data.name,
-                        this.command,
-                    );
-                }
-        }
-
-        //deploying datas from commands to the discordjs api
-        if (!new Deploy(this)) throw new Error("Failed to deploy commands");
-
-        //event initializer to start bot with
-        for (const eventUse in new BotEvents()) {
-            this.event = new new BotEvents()[eventUse]();
-            if (this.event.once)
-                this.client.once(this.event.name, (...args) => {
-                    new new new BotEvents()[eventUse]().execute(...args);
-                });
-            else
-                this.client.on(this.event.name, (...args) => {
-                    args[0].time = performance.now();
-                    new new new BotEvents()[eventUse]().execute(...args);
-                });
-        }
-
-        //client token
-        this.client.login(tokens.djs);
-    }
-})();
+class Twitch {
+}
