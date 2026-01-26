@@ -18,6 +18,9 @@ Something unique 95% of javascript developers havent heard of yet is called "gen
 ## Lets target older devs! (a work in progress)
 Want to make the cursed code more compatible to very older browsers, and make it precursor to the class introduction? Fear no more!  In ``oldfunctionHell.js`` thats exactly that!  Just pure... unadulterated... new Function() hell! 0 var, let, and consts are  being used here too, like ``classOnly.js`` but much, MUCH older!
 
+## Prototype hell (a work in progress)
+Much like the ``oldFunctionHell.js``, I wanted to target prototype, as its weird to just yeet the prototype chain into the abyss, but instead, "LeTs InCoRpOrAtE It InTo OuR CoDeBaSe" and see how far we can get away just using prototype from what wee learned from ``oldFunctionHell.js`` 
+
 ## Finally
 What I often hear when sharing this "beautiful" knowledge from various users is:
  - "Who hurt you?!"
