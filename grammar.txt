@@ -1,0 +1,24 @@
+//Lets give you a glimpse into my madness
+//here we have the grammar of whats made in javascript
+
+File :: { Statements }
+Statements :: { Statement ';' }
+Statement ::
+    (
+        Exp |
+        Identifier |
+        VarDec '=' VarValue |
+        FuncDec
+    )
+VarDec :: 'var' | 'let' | 'const'
+VarValue :: FuncDec | TypedValues
+FuncDec ::
+    ['new'](
+        'function' (
+            '*' [Identifier] ParamDec FnBody [ ParamDec [ 
+                '.' [ 'next' | 'value' | 'done' ] [ ParamDec ]]
+            ]|
+            [Identifier] ParamDec FnBody [ ParamDec ]
+        ) |
+        'class' [Identifier]
+    )

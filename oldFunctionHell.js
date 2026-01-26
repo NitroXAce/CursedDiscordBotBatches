@@ -51,8 +51,7 @@ function Editor() {
     for (this.i in this.obj[this.user])
         for (this.j in this.userObj)
             if (this.i == this.j)
-                this.obj[this.user][this.i] =
-                    this.userObj[this.j];
+                this.obj[this.user][this.i] = this.userObj[this.j];
             else if (this.j == 'bool')
                 this.bool = this.userObj[this.j];
             else continue;
@@ -112,12 +111,12 @@ function Commands() {
                 function cb() {
                     this.jsonUser = arguments[0];
                     this.points = this.jsonUser.points;
-                    if (Date.now() > this.jsonUser.freebie + 3600000) {
-                        this.jsonUser.freebie = Date.now();
-                        this.jsonUser.points +=
-                            Math.round(Math.random() * 1000) + 500;
-                        this.bool = true;
-                    }
+                    if (Date.now() <= this.jsonUser.freebie + 3600000) 
+                        return this.bool = false;
+                    this.jsonUser.freebie = Date.now();
+                    this.jsonUser.points +=
+                        Math.round(Math.random() * 1000) + 500;
+                    this.bool = true;
                 }
             );
 
