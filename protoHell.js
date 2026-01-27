@@ -191,84 +191,61 @@ BotEvents.prototype.Ready = function Ready(){
     };
 };
 
-///------------------------------------------------------------------------------
-
 BotEvents.prototype.InteractionCreate = function InteractionCreate(){
     this.__proto__.name = "interactionCreate";
-    this.__proto__.execute = function Execute(){
+    this.__proto__.execute = function Execute() {
         this.__proto__.interaction = arguments[0];
         if (!this.__proto__.interaction.isChatInputCommand()) return;
+        if (!(this.__proto__.interaction.commandName in new Commands())) return;
 
-        this.__proto__.commandPro = new Commands().__proto__;
-        if (!(this.__proto__.interaction.commandName in this.__proto__.commandPro)) return;
-        this.__proto__.embeds =  new new this
-            .commandPro
+        this.__proto__.embeds = new new new Commands()
             [this.__proto__.interaction.commandName]()
-            .execute();
+            .execute(this.__proto__.interaction);
 
-
-
-function BotEvents() {
-    this.__proto__.ready = function Ready() {
-        this.__proto__.once = true;
-        this.__proto__.name = "ready";
-        this.__proto__.execute = function Execute() {
-            this.__proto__.client = arguments[0];
-            console.log(`Logged in as ${this.__proto__.client.user.tag}`);
-            return new KeepOnly(this, []);
-        };
-    };
-    this.__proto__.interactionCreate = function InteractionCreate() {
-        this.__proto__.name = "interactionCreate";
-        this.__proto__.execute = function Execute() {
-            this.__proto__.interaction = arguments[0];
-            if (!this.__proto__.interaction.isChatInputCommand()) return;
-            if (!(this.__proto__.interaction.commandName in new Commands())) return;
-
-            this.__proto__.embeds = new new new Commands()
-                [this.__proto__.interaction.commandName]()
-                .execute(this.__proto__.interaction);
-
-            this.__proto__.interaction
-                .reply(new Message(
-                    this.__proto__.embeds
+        this.__proto__.interaction
+            .reply(new Message(
+                this.__proto__.embeds
+                    .setTimestamp()
+                    .setFooter(new Footer(
+                        this.__proto__.interaction.time,
+                        performance.now(),
+                    ))
+            ))
+            .catch(function () {
+                this.__proto__.error = arguments[0];
+                this.__proto__.err = new Message(
+                    new EmbedBuilder()
+                        .setTitle("Error")
+                        .setDescription(this.__proto__.error.toString())
+                        .setColor("Red")
                         .setTimestamp()
-                        .setFooter(new Footer(
-                            this.__proto__.interaction.time,
-                            performance.now(),
-                        ))
-                ))
-                .catch(function () {
-                    this.__proto__.error = arguments[0];
-                    this.__proto__.err = new Message(
-                        new EmbedBuilder()
-                            .setTitle("Error")
-                            .setDescription(this.__proto__.error.toString())
-                            .setColor("Red")
-                            .setTimestamp()
-                            .setFooter(
-                                new Footer(
-                                    this.__proto__.interaction.time,
-                                    performance.now(),
-                                ),
+                        .setFooter(
+                            new Footer(
+                                this.__proto__.interaction.time,
+                                performance.now(),
                             ),
-                    );
-                    if (
-                        this.__proto__.interaction.replied ||
-                        this.__proto__.interaction.deferred
-                    )
-                        return this.__proto__.interaction.followUp(this.__proto__.err);
-                    else return this.__proto__.interaction.reply(this.__proto__.err);
-                });
-        };
+                        ),
+                );
+                if (
+                    this.__proto__.interaction.replied ||
+                    this.__proto__.interaction.deferred
+                )
+                    return this.__proto__.interaction.followUp(this.__proto__.err);
+                else return this.__proto__.interaction.reply(this.__proto__.err);
+            });
     };
-}
+};
+
+
 
 new function Main() {
     //importing modules
     this.__proto__.fs = require("fs");
     this.__proto__.webSocket = require("ws");
     this.__proto__.tokens = require("./config.json");
+    this.__proto__.commandList = [];
+    this.__proto__.clientId = "763924189374840892";
+    this.__proto__.guildId = "1219483237139746896";
     this.__proto__.djs = {};
     for (this.__proto__.key in require('discord.js'))
         this.__proto__.djs[this.__proto__.key] = require('discord.js')[this.__proto__.key];
@@ -282,11 +259,6 @@ new function Main() {
         "REST",
         "Routes",
     ]);
-
-
-    this.__proto__.commandList = [];
-    this.__proto__.clientId = "763924189374840892";
-    this.__proto__.guildId = "1219483237139746896";
 
     //begin unpacking the client
     this.__proto__.client = new this.__proto__.djs.Client(
@@ -317,15 +289,23 @@ new function Main() {
 
     //event initializer to start bot with
     for (this.__proto__.eventUse in new BotEvents()) {
-        this.__proto__.event = new new BotEvents()[this.__proto__.eventUse]();
+        this.__proto__.event = new new BotEvents().__proto__[this.__proto__.eventUse]();
         if (this.__proto__.event.once)
             this.__proto__.client.once(this.__proto__.event.name, (...args) => {
-                new new new BotEvents()[this.__proto__.eventUse]().execute(...args);
+                new new new BotEvents()
+                    .__proto__
+                    [this.__proto__.eventUse]()
+                    .__proto__
+                    .execute(...args);
             });
         else
             this.__proto__.client.on(this.__proto__.event.name, (...args) => {
                 args[0].time = performance.now();
-                new new new BotEvents()[this.__proto__.eventUse]().execute(...args);
+                new new new BotEvents()
+                    .__proto__
+                    [this.__proto__.eventUse]()
+                    .__proto__
+                    .execute(...args);
             });
     }
 
@@ -334,7 +314,7 @@ new function Main() {
 
     return new KeepOnly(this, []);
 
-}
+}()
 
 
 class Twitch {

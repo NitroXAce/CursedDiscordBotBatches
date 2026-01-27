@@ -1,24 +1,427 @@
 //Lets give you a glimpse into my madness
 //here we have the grammar of whats made in javascript
 
-File :: { Statements }
-Statements :: { Statement ';' }
+//========================================================================
+// BASE JAVASCRIPT GRAMMAR
+//========================================================================
+
+File ::
+    { Statements }
+
+Statements ::
+    { Statement ';' }
+
 Statement ::
-    (
-        Exp |
-        Identifier |
-        VarDec '=' VarValue |
-        FuncDec
-    )
-VarDec :: 'var' | 'let' | 'const'
-VarValue :: FuncDec | TypedValues
-FuncDec ::
-    ['new'](
-        'function' (
-            '*' [Identifier] ParamDec FnBody [ ParamDec [ 
-                '.' [ 'next' | 'value' | 'done' ] [ ParamDec ]]
-            ]|
-            [Identifier] ParamDec FnBody [ ParamDec ]
-        ) |
-        'class' [Identifier]
-    )
+    Exp |
+    VarDec Identifier '=' VarValue |
+    FuncDec |
+    ReturnStmt |
+    IfStmt |
+    ForStmt
+
+VarDec :: 
+    'var' | 'let' | 'const'
+
+VarValue :: 
+    FuncDec | TypedValues | ObjectLiteral
+
+FuncDec :: 
+    GenDec | VanFnDec | ClassDec | ArrFnDec
+
+ArrFnDec :: 
+    ParamDec '=>' ( FnBody | Exp )
+
+VanFnDec :: 
+    ['async' | 'new'] 'function' [Identifier] ParamDec FnBody [ ParamDec ]
+
+GenDec ::
+    ['async'] 'function*' [Identifier] ParamDec FnBody [ ParamDec [ 
+        '.' [ 'next' | 'value' | 'done' ] [ ParamDec ]]
+    ]
+
+ClassDec :: 
+    ['new'] 'class' [Identifier] '{' 
+        { ['get' | 'set' | '#'] FieldDec (
+            '=' VarValue ';' |
+            ParamDec FnBody
+        )}
+        [ 'constructor' ParamDec FnBody ]
+    '}'
+
+ParamDec ::
+    '(' [ Identifier { ',' Identifier } ] ')'
+
+FnBody ::
+    '{' Statements '}'
+
+ObjectLiteral ::
+    '{' [ Property { ',' Property } ] '}'
+
+Property ::
+    Identifier ':' Exp |
+    Identifier
+
+Exp ::
+    Literal | Identifier | FuncCall | BinaryOp | TernaryOp | CommaOp | FuncDec
+
+CommaOp ::
+    Exp ',' Exp { ',' Exp }
+
+Literal ::
+    StringLiteral | Number | Boolean | 'null' | 'undefined'
+
+StringLiteral ::
+    '"' { Character } '"' | "'" { Character } "'"
+
+Number ::
+    Digit { Digit } [ '.' Digit { Digit } ]
+
+Boolean ::
+    'true' | 'false'
+
+Identifier ::
+    Letter { Letter | Digit | '_' | '$' }
+
+FuncCall ::
+    Identifier '(' [ Exp { ',' Exp } ] ')'
+
+BinaryOp ::
+    Exp Operator Exp
+
+Operator ::
+    '+' | '-' | '*' | '/' | '&&' | '||' | '===' | '!==' | '>' | '<' | '>=' | '<=' | '??' | 'in'
+
+TernaryOp ::
+    Exp '?' Exp ':' Exp
+
+ReturnStmt ::
+    'return' [ Exp ] ';'
+
+IfStmt ::
+    'if' '(' Exp ')' Statement [ 'else' Statement ]
+
+ForStmt ::
+    'for' '(' ForInit ';' Exp ';' Exp ')' Statement
+
+ForInit ::
+    VarDec Identifier '=' Exp | Exp
+
+
+//========================================================================
+// classOnly.js GRAMMAR
+//========================================================================
+
+ClassOnlyFile ::
+    Imports
+    { ClassDec }
+
+Imports ::
+    { 'import' ImportSpec 'from' StringLiteral [ 'with' ObjectLiteral ] ';' }
+
+ImportSpec ::
+    '{' Identifier { ',' Identifier } '}' |
+    Identifier
+
+ClassDec ::
+    'class' Identifier [ 'extends' Identifier ] '{' 
+        { ClassMember }
+    '}'
+
+ClassMember ::
+    FieldDec |
+    ConstructorDec |
+    MethodDec
+
+FieldDec ::
+    Identifier '=' Exp [ ';' ]
+
+ConstructorDec ::
+    'constructor' ParamDec FnBody
+
+MethodDec ::
+    Identifier '=' ClassDec  // Nested class as property
+
+InlineClassDec ::
+    'new' '(' 'class' '{' 
+        { FieldDec | ConstructorDec }
+    '}' ')' [ ParamDec ]
+
+// Key pattern: Everything is a class, even properties can be classes
+// Constructors return new inline classes
+// Heavy use of: new (class {...})()
+
+
+//========================================================================
+// curryScript.js GRAMMAR
+//========================================================================
+
+CurryScriptFile ::
+    Imports
+    IIFE
+
+IIFE ::
+    '(' '(' CommaDecls ')' '=>' Exp ')' '(' ')'
+
+CommaDecls ::
+    ( VarDec | Identifier ) '=' Exp { ',' ( VarDec | Identifier ) '=' Exp }
+
+CurryExp ::
+    ArrFnDec |
+    ObjectLiteral |
+    IIFEExp |
+    BooleanShortCircuit |
+    CommaOp |
+    Exp
+
+IIFEExp ::
+    '(' '(' ParamDec '=>' '(' CommaOp ')' ')' '(' ')' ')'
+
+CurryArrFnDec ::
+    ParamDec '=>' ( IIFEExp | ObjectLiteral | CurryExp )
+
+BooleanShortCircuit ::
+    Exp '&&' Exp |
+    Exp '||' Exp
+
+// Key pattern: Single massive IIFE wrapping everything
+// All declarations via comma operator
+// Heavy currying and inline IIFE for scoping
+// Short-circuit evaluation for control flow
+// No statements, only expressions
+
+
+//========================================================================
+// funcExpress.js GRAMMAR
+//========================================================================
+
+FuncExpressFile ::
+    OuterIIFE
+
+OuterIIFE ::
+    '(' '(' ')' '=>' InnerIIFE ')' '(' ')'
+
+InnerIIFE ::
+    '(' '(' FuncExpressCommaDecls ')' '=>' Exp ')' '(' ')'
+
+FuncExpressCommaDecls ::
+    DestructAssign { ',' ( VarDec Identifier | Identifier ) '=' Exp }
+
+DestructAssign ::
+    '{' Identifier { ',' Identifier } '}' '=' RequireCall
+
+RequireCall ::
+    'require' '(' StringLiteral ')'
+
+FuncExpressArrFnDec ::
+    ParamDec '=>' ( IIFEExp | FuncExpressObjectLiteral | Exp )
+
+FuncExpressObjectLiteral ::
+    '{' [ FuncExpressProperty { ',' FuncExpressProperty } ] '}'
+
+FuncExpressProperty ::
+    Identifier ':' ( FuncExpressObjectLiteral | FuncExpressArrFnDec | Exp )
+
+// Key pattern: Double-wrapped IIFE (() => ((...) => ...)())()
+// Destructuring via require() in comma expressions
+// Arrow functions returning IIFEs for complex logic
+// Objects with arrow function properties
+// Nullish coalescing (??) for defaults
+
+
+//========================================================================
+// generatorHell.js GRAMMAR (INCOMPLETE)
+//========================================================================
+
+GeneratorFile ::
+    Imports
+    { GenDec }
+
+GenDec ::
+    'function*' Identifier ParamDec GenFnBody
+
+GenFnBody ::
+    '{' GenStatements '}'
+
+GenStatements ::
+    { GenStatement ';' }
+
+GenStatement ::
+    Statement |
+    YieldStmt |
+    YieldDelegateStmt
+
+YieldStmt ::
+    'yield' Exp
+
+YieldDelegateStmt ::
+    'yield*' Exp
+
+GenFnDec ::
+    'function*' Identifier ParamDec FnBody
+
+NestedGenDec ::
+    'yield' GenFnDec ';'
+
+// Key pattern: Everything is a generator function
+// yield for returning values
+// yield* for delegating to other generators
+// Nested generators yielding other generators
+// .next() and .value for iteration
+// STATUS: INCOMPLETE - doesn't fully work
+
+
+//========================================================================
+// oldFunctionHell.js GRAMMAR
+//========================================================================
+
+OldFunctionFile ::
+    '"use strict";'
+    { OldFnDec }
+
+OldFnDec ::
+    'function' Identifier '(' ')' OldFnBody
+
+OldFnBody ::
+    '{' ThisStatements '}'
+
+ThisStatements ::
+    { ThisStatement ';' }
+
+ThisStatement ::
+    ThisAssign |
+    ForInLoop |
+    DeleteThis |
+    ReturnStmt
+
+ThisAssign ::
+    'this' '.' Identifier '=' Exp
+
+ArgumentsAccess ::
+    'arguments' '[' Number ']'
+
+ThisProperty ::
+    'this' '.' Identifier
+
+DeleteThis ::
+    'delete' ThisProperty
+
+ForInLoop ::
+    'for' '(' ThisAssign 'in' Exp ')' Statement
+
+NewFunction ::
+    'new' FnDec '(' ')'
+
+AnonymousFnDec ::
+    'new' 'function' '(' ')' FnBody '(' ')'
+
+NestedFnDec ::
+    'function' Identifier '(' ')' FnBody
+
+// Key pattern: function Constructor() {} style
+// this.prop = arguments[0] for parameters
+// delete this.prop for cleanup
+// new ConstructorName() for instantiation
+// Nested anonymous functions: new function() {...}()
+// Heavy for...in iteration on this
+
+
+//========================================================================
+// protoHell.js GRAMMAR
+//========================================================================
+
+ProtoHellFile ::
+    '"use strict";'
+    { ProtoFnDec }
+    { PrototypeMethod }
+
+ProtoFnDec ::
+    'function' Identifier '(' ')' ProtoFnBody
+
+ProtoFnBody ::
+    '{' ProtoStatements '}'
+
+ProtoStatements ::
+    { ProtoStatement ';' }
+
+ProtoStatement ::
+    ProtoAssign |
+    ObjectAssignProto
+
+ProtoAssign ::
+    'this' '.' '__proto__' '.' Identifier '=' Exp
+
+ObjectAssignProto ::
+    'Object' '.' 'assign' '(' ProtoTarget ',' ObjectLiteral ')'
+
+ProtoTarget ::
+    'this' '.' '__proto__'
+
+PrototypeMethod ::
+    Identifier '.' 'prototype' '.' Identifier '=' 'function' Identifier '(' ')' ProtoFnBody
+
+ProtoStatement ::
+    ProtoAssign |
+    ObjectAssignProto |
+    DeleteProto |
+    ForInLoop |
+    ReturnStmt
+
+DeleteProto ::
+    'delete' 'this' '.' '__proto__' '.' Identifier
+
+ProtoChainAccess ::
+    'this' '.' '__proto__' '.' Identifier
+
+ArgumentsAccess ::
+    'arguments' '[' Number ']'
+
+// Key pattern: function Constructor() with __proto__ abuse
+// this.__proto__.prop = arguments[0]
+// Object.assign(this.__proto__, {...})
+// Constructor.prototype.Method = function() {}
+// Direct prototype chain manipulation
+// Heavy deletion and property filtering
+
+
+//========================================================================
+// quoteNormal.js GRAMMAR
+//========================================================================
+
+QuoteNormalFile ::
+    '"use strict";'
+    { ConstDec }
+
+ConstDec ::
+    'const' Identifier '=' Exp ';'
+
+RequireStmt ::
+    'const' ( Identifier | DestructPattern ) '=' RequireCall ';'
+
+DestructPattern ::
+    '{' Identifier { ',' Identifier } '}'
+
+RequireCall ::
+    'require' '(' StringLiteral ')'
+
+QuoteNormalArrFnDec ::
+    ParamDec '=>' ( QuoteNormalBlockBody | Exp )
+
+QuoteNormalBlockBody ::
+    '{' Statements '}'
+
+ObjectMethod ::
+    Identifier ParamDec QuoteNormalBlockBody
+
+ReturnObject ::
+    'return' ObjectLiteral ';'
+
+ForInLoop ::
+    'for' '(' 'const' Identifier 'in' Exp ')' Statement
+
+// Key pattern: const declarations everywhere
+// Arrow functions with explicit blocks: () => {...}
+// require() for imports (CommonJS)
+// for...in loops instead of comma operators
+// Object methods without 'function' keyword
+// More traditional control flow
+// Most "readable" version (relatively speaking)

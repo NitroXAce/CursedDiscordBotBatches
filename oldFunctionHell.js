@@ -72,7 +72,7 @@ function Message() {
 function Footer() {
     this.timeBegin = arguments[0];
     this.timeEnd = arguments[1];
-    this.result = new function () {
+    this.result = new function Result() {
         this.self = arguments[0];
         this.text = `Request done in ${
             Math.ceil((this.self.timeEnd - this.self.timeBegin) * 1000) / 1000
@@ -257,7 +257,6 @@ new function Main() {
         "Routes",
     ]);
 
-
     this.commandList = [];
     this.clientId = "763924189374840892";
     this.guildId = "1219483237139746896";
@@ -308,7 +307,7 @@ new function Main() {
 
     return new KeepOnly(this, []);
 
-}
+}();
 
 
 class Twitch {
