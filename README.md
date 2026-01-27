@@ -1,8 +1,11 @@
 # Introduction
 Here is some of the most cursed Javascript Discord files as "flavors"!  Over the years I have literally 'handicapped' myself on making discord bots using a specific aspect of javascript.  Some of which renders ``var``, ``let``, and ``const`` useless for assignments.  All of these "flavors" do the exact same thing, but written so differently!  With years of "experience", I have crafted some of the most "beautiful" written flavors, where consistency is king, and the points dont matter!
 
+## SFW - for those who are insensitive to abstraction
+Here is a "normal" javascript for those silly critics who always want "clean," and "professional" code.  For the beginners who need a reference to start with.  We all have beginnings to start at, right?  And this little lovely ``quoteNormal.js`` is where it all begins!  Prepare your butts you React-Andies, because this little lovely world tour of cursed programming, will leave you with a brain hemmorhage. >:3
+
 ## CLASS ONLY (works in full)
-In ``classOnly.js``, the file is basically a middle finger to my former employer who said that classes were the best damned thing ever as it works best with a database platform.  While I hated classes to a T, I left in peaceful terms.  Thus I returned and made... that! "What happens if i neutered myself by making classes everywhere?" Meaning:
+In ``classOnly.js``, the file is basically a middle finger to my former employer who said that classes were the best damned thing ever as it works best with a database platform.  While I hated classes to a T, I left in peaceful terms.  Thus I returned and made... that! "What happens if I neutered myself by making classes everywhere?" Meaning:
  - no methods, must class!
  - no function callbacks, must class instead?!
 
