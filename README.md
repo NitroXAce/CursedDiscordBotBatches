@@ -10,7 +10,7 @@ In ``classOnly.js``, the file is basically a middle finger to my former employer
  - no function callbacks, must class instead?!
 
 ## Expression Heavy Functional Bot
-In ``funcExpress.js``, this is what happens when you're allergic to EVERY keyword and rely on logical operators and unique mending of objects to handle multi-conditions! Why make such an abomination?  What happens if your boss snorts about `"ImAgInE, CrEaTiNg An ApPlIcAtIoN wItHoUt DoInG NoRmAl PrOgRaMmInG?"`  And voila! Keywordless AND statementless flavored discord bot has been born!
+In ``funcExpress.js``, this is what happens when you're allergic to EVERY keyword and rely on logical operators and unique mending of objects to handle multi-conditions! Why make such an abomination?  What happens if your boss snorts about *"ImAgInE, CrEaTiNg An ApPlIcAtIoN wItHoUt DoInG NoRmAl PrOgRaMmInG?"*  And voila! Keywordless AND statementless flavored discord bot has been born!
 
 ## CurryScript
 An attempt at making "object-less" funcitonal programming using callbacks and currying, in ``curryScript.js``, its almost exactly that, currying, some spicy indian stew all over your computer screen!  Just waiting for you to get indigestion!  Its similar in vain to ``funncExpress.js`` as it still retains the allergies of keywords.
@@ -19,7 +19,7 @@ An attempt at making "object-less" funcitonal programming using callbacks and cu
 Something unique 95% of javascript developers havent heard of yet is called "generators".  Generators are generally useful for pagination and "pausing" or "waiting" on instruction use cases.  Much like a Master chef telling the mixer to mix ingredients WHEN the Chef says so!  However... in this case? Its just an iteration nightmare!
 
 ## Lets target older devs! (a work in progress)
-Want to make the cursed code more compatible to very older browsers, and make it precursor to the class introduction? Fear no more!  In ``oldfunctionHell.js`` thats exactly that!  Just pure... unadulterated... new Function() hell! 0 var, let, and consts are  being used here too, like ``classOnly.js`` but much, MUCH older!
+Want to make the cursed code more compatible to very older browsers, and make it precursor to the class introduction? Fear no more!  In ``oldfunctionHell.js`` thats exactly that!  Just pure... **unadulterated...** new Function() hell! 0 var, let, and consts are  being used here too, like ``classOnly.js`` but much, MUCH older!
 
 ## Prototype hell (a work in progress)
 Much like the ``oldFunctionHell.js``, I wanted to target prototype, as its weird to just yeet the prototype chain into the abyss, but instead, "LeTs InCoRpOrAtE It InTo OuR CoDeBaSe" and see how far we can get away just using prototype from what wee learned from ``oldFunctionHell.js`` 
@@ -30,4 +30,4 @@ What I often hear when sharing this "beautiful" knowledge from various users is:
  - "Why are you doing this?!"
  - "What real world usage is this for?"
 
-To which I reply "Good", and "Because it simply works!" because I am a curious Javascript developer, testing edge cases since I was younger, while I dont have ANY SINGLE EXPERIENCE IN TECH! I am however, just a paid factory laborer while fixing boats on the side.  I do this for fun first, and monetary value last.  My goal is to make people THINK about odd, out of the box thinking and how to impliment these cool ideas!  Even then, be consistent in writing styles so no one gets confused!  I am Gareth (a vtuber "Ace Tributon"), and I am glad to have blessed your eyeballs today!  Take your time to have a bit of therapy, some milk, and touch some grass!  Because I wont stop at just javascript...  Enjoy! >:3
+To which I reply "Good", and "Because it simply works!" because I am a curious Javascript developer, testing edge cases since I was younger, while I dont have **ANY SINGLE EXPERIENCE IN TECH!** I am however, just a paid factory laborer while fixing boats on the side.  I do this for fun first, and monetary value last.  My goal is to make people THINK about odd, out of the box thinking and how to impliment these cool ideas!  Even then, be consistent in writing styles so no one gets confused!  I am Gareth (a vtuber "Ace Tributon"), and I am glad to have blessed your eyeballs today!  Take your time to have a bit of therapy, some milk, and touch some grass!  Because I wont stop at just javascript...  Enjoy! >:3

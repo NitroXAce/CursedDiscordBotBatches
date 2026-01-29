@@ -82,7 +82,7 @@ TwoInput.prototype.KeepOnly = function KeepOnly(){
     delete this.__proto__.paramA;
     delete this.__proto__.paramB;
     return this.__proto__.result;
-}
+};
 
 TwoInput.prototype.MergeObj = function MergeObj(){
     this.__proto__.keepMethods = [];
@@ -110,13 +110,14 @@ TwoInput.prototype.Editor = function Editor(){
     for (this.__proto__.i in this.__proto__.obj[this.__proto__.paramA])
         for (this.__proto__.j in this.__proto__.userObj)
             if (this.__proto__.i == this.__proto__.j)
-                this.__proto__.obj[this.__proto__.paramA][this.__proto__.i] = this.__proto__.userObj[this.__proto__.j];
+                this.__proto__.obj[this.__proto__.paramA][this.__proto__.i] =
+                    this.__proto__.userObj[this.__proto__.j];
             else if (this.__proto__.j == 'bool')
                 this.__proto__.bool = this.__proto__.userObj[this.__proto__.j];
             else continue;
     this.__proto__.stringy = JSON.stringify(this.__proto__.obj, "", 4);
     this.__proto__.fs.writeFileSync("./users.json", this.__proto__.stringy);
-    new TwoInput(this, ['bool', 'obj']).KeepOnly();
+    new TwoInput(this.__proto__, ['bool', 'obj']).KeepOnly();
 }
 
 TwoInput.prototype.Footer = function Footer(){
@@ -129,7 +130,7 @@ TwoInput.prototype.Footer = function Footer(){
         this.__proto__.iconURL = "https://tenor.com/view/clock-gif-14609778";
         delete this.__proto__.paramA;
     });
-    new TwoInput(this, [ "result" ]).KeepOnly();
+    new TwoInput(this.__proto__, [ "result" ]).KeepOnly();
 }
 
 Commands.prototype.Ping = function Ping(){
@@ -168,7 +169,7 @@ Commands.prototype.Freebie = function Freebie(){
             }
         );
         this.__proto__.user.Editor();
-        new TwoInput(this, ['user']).KeepOnly();
+        new TwoInput(this.__proto__, ['user']).KeepOnly();
 
         return new EmbedBuilder()
             .setTitle("Freebie")
@@ -187,7 +188,7 @@ BotEvents.prototype.Ready = function Ready(){
     this.__proto__.execute = function Execute(){
         this.__proto__.client = arguments[0];
         console.log(`Logged in as ${this.__proto__.client.user.tag}`);
-        return new KeepOnly(this, []);
+        return new KeepOnly(this.__proto__, []);
     };
 };
 

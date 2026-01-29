@@ -3,6 +3,20 @@
 
 "use strict";
 
+function MergeObj() {
+    this.parent = arguments[0];
+    this.modify = arguments[1];
+    this.keepMethods = [];
+    for (this.i in this.parent) {
+        this.keepMethods[this.keepMethods.length] = this.i;
+        for (this.j in this.modify)
+            if (this.i == this.j)
+                this.parent[this.i] = this.modify[this.i];
+    }
+    this.return = new KeepOnly(this.parent, this.keepMethods);
+    return new KeepOnly(this, ["return"]).return;
+}
+
 function KeepOnly() {
     this.obj = arguments[0];
     this.keys = arguments[1];
@@ -16,20 +30,6 @@ function KeepOnly() {
     delete this.obj;
     delete this.keys;
     return this.result;
-}
-
-function MergeObj() {
-    this.parent = arguments[0];
-    this.modify = arguments[1];
-    this.keepMethods = [];
-    for (this.i in this.parent) {
-        this.keepMethods[this.keepMethods.length] = this.i;
-        for (this.j in this.modify)
-            if (this.i == this.j)
-                this.parent[this.i] = this.modify[this.i];
-    }
-    this.return = new KeepOnly(this.parent, this.keepMethods);
-    return new KeepOnly(this, ["return"]).return;
 }
 
 function Editor() {

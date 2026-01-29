@@ -82,7 +82,7 @@ class Commands {
                 this.interaction = interaction;
                 this.user = new Editor(
                     this.interaction.user.id,
-                    class {
+                    class Callback {
                         constructor(jsonUser) {
                             this.jsonUser = jsonUser;
                             this.points = this.jsonUser.points;
@@ -209,7 +209,6 @@ class BotEvents {
 
 //self invoked class firing event IICE
 new (class Main {
-    commands = new Commands();
     commandList = [];
     clientId = "763924189374840892";
     guildId = "1219483237139746896";
@@ -239,18 +238,21 @@ new (class Main {
         if (!new Deploy(this)) throw new Error("Failed to deploy commands");
 
         //event initializer to start bot with
-        for (const eventUse in new BotEvents()) {
-            this.event = new new BotEvents()[eventUse]();
-            if (this.event.once)
-                this.client.once(this.event.name, (...args) => {
-                    new new new BotEvents()[eventUse]().execute(...args);
-                });
+        for (const eventUse in new BotEvents())
+            if (new new BotEvents()[eventUse]().once)
+                this.client.once(
+                    new new BotEvents()[eventUse]().name,
+                    (...args) =>
+                        new new new BotEvents()[eventUse]().execute(...args)
+                );
             else
-                this.client.on(this.event.name, (...args) => {
-                    args[0].time = performance.now();
-                    new new new BotEvents()[eventUse]().execute(...args);
-                }); 
-        }
+                this.client.on(
+                    new new BotEvents()[eventUse]().name, 
+                    (...args) => (
+                        args[0].time = performance.now(),
+                        new new new BotEvents()[eventUse]().execute(...args)
+                    )
+                ); 
 
         //client token
         this.client.login(tokens.djs);
