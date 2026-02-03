@@ -244,19 +244,17 @@ new (class Main {
 
         //event initializer to start bot with
         for (const eventUse in new BotEvents())
-            if (new new BotEvents()[eventUse]().once)
-                this.client.once(
-                    new new BotEvents()[eventUse]().name,
-                    (...args) => new new new BotEvents()[eventUse]().execute(...args)
-                );
-            else
-                this.client.on(
-                    new new BotEvents()[eventUse]().name, 
-                    (...args) => (
-                        args[0].time = performance.now(),
-                        new new new BotEvents()[eventUse]().execute(...args)
-                    )
-                ); 
+            if (new new BotEvents()[eventUse]().once) this.client.once(
+                new new BotEvents()[eventUse]().name,
+                (...args) => new new new BotEvents()[eventUse]().execute(...args)
+            );
+            else this.client.on(
+                new new BotEvents()[eventUse]().name, 
+                (...args) => (
+                    args[0].time = performance.now(),
+                    new new new BotEvents()[eventUse]().execute(...args)
+                )
+            ); 
 
         //client token
         this.client.login(tokens.djs);

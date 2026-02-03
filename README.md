@@ -25,18 +25,18 @@ So how did I accomplish this *beautiful* Javascript challenge?
 
 ## Expression Heavy Functional Bot
 In **funcExpress.js**, this is what happens when you're allergic to EVERY keyword and rely on logical operators and unique mending of objects to handle multi-conditions! Why make such an abomination?  What happens if your boss snorts about *"ImAgInE, CrEaTiNg An ApPlIcAtIoN wItHoUt DoInG NoRmAl PrOgRaMmInG?"*  And voila! Keywordless AND statementless flavored discord bot has been born!
- - **Hypothetical Boss:** This boss is **REALLY** flamboyant, very experessive!  So much so that statements, no longer appeases him anymore.  *"OnE StAtEmEnT iSaLl I nEeD!"* - He said, probably.  So what does he suggest?  ABSOLUTELY NOTHING Statement wise, everything must be kept contained in expressions only!  Meaning no; var, let, const, if/else (except ternaries), switch/case (except using objects as an inefficient match condition), nor even for/while loops!  So what is left is... :,)
+ - **Hypothetical Boss:** This boss is **REALLY** flamboyant, very experessive!  So much so that statements, no longer appeases him anymore.  *"OnE StAtEmEnT i SHaLl I nEeD!"* - He said, probably.  So what does he suggest?  ABSOLUTELY NOTHING Statement wise, everything must be kept contained in expressions only!  Meaning no; var, let, const, if/else (except ternaries), switch/case (except using objects as an inefficient match condition), nor even for/while loops!  So what is left is... :,)
  - **Assignments:** Default Parameters inside of localized IIFEs
  - **Manipulate:** IIFEs and normal function stuff (and only **arrow** functions)
 
 ## CurryScript
 An attempt at making "object-less" funcitonal programming using callbacks and currying, in **curryScript.js**, its almost exactly that, currying, some spicy indian stew all over your computer screen!  Just waiting for you to get indigestion!  Its similar in vain to **funcExpress.js** as it still retains the allergies of keywords.
- - **Hypothetical Boss:** So we met the boss thats expression based only, right?  Well, meet his replacement, some spicy dude who wants nothing but curry for every single meal he gets!  Still just as **flamobyant** as FuncExpress's Boss.  But Objects? Nah, lets just curry the hell out of everything instead, *pfft* who **needs** Objects, am i right/ :'D
- - **Assignments:**
- - **Manipulate:**
+ - **Hypothetical Boss:** So we met the boss thats expression based only, right?  Well, meet his replacement, some spicy dude who wants nothing but curry for every single meal he gets!  Still just as **flamobyant** as FuncExpress's Boss.  But Objects? Nah, lets just curry the hell out of everything instead, *pfft* who **needs** Objects, am I right? :'D
+ - **Assignments:** Same as FuncExpress, but object assignment is curries
+ - **Manipulate:** Same as FuncExpress
 
 ## GENERATOR HELL (a work in progress)
-Something unique 95% of javascript developers havent heard of yet is called "generators".  Generators are generally useful for pagination and "pausing" or "waiting" on instruction use cases.  Much like a Master chef telling the mixer to mix ingredients WHEN the Chef says so!  However... in this case? Its just an iteration nightmare!
+Something unique 95% of javascript developers haven't heard of yet is called "generators".  Generators are generally useful for pagination and "pausing" or "waiting" on instruction use cases.  Much like a Master chef telling the mixer to mix ingredients WHEN the Chef says so!  However... in this case? Its just an iteration nightmare!
  - **Hypothetical Boss:**
  - **Assignments:**
  - **Manipulate:**

@@ -175,12 +175,13 @@
                 )
                 (commands[command]),
             ),
+        
         //deploy before continuing to events!
         !deploy({ commandList, clientId, guildId })
             ? new Error("Failed to deploy commands")
             : Object
                 .keys(botEvents)
-                .forEach((event) =>
+                .forEach(event =>
                     (thisEvent =>
                         client[thisEvent.once ? "once" : "on"](
                             thisEvent.name,
