@@ -95,16 +95,16 @@ class Commands {
                             }
                         }
                     },
-                );
+                ).cb;
 
                 return new EmbedBuilder()
                     .setTitle("Freebie")
                     .setDescription(
-                        this.user.cb.bool
-                            ? `You earned: ${this.user.cb.jsonUser.points - this.user.cb.points}pts`
+                        this.user.bool
+                            ? `You earned: ${this.user.jsonUser.points - this.user.points}pts`
                             : "You already got a free item this hour!",
                     )
-                    .setColor(this.user.cb.bool ? "Green" : "Red");
+                    .setColor(this.user.bool ? "Green" : "Red");
             }
         };
     };
@@ -116,34 +116,35 @@ class Deploy {
         this.app = carry.clientId;
         this.guild = carry.guildId;
 
-        if (this.list && this.app && this.guild) {
-            this.rest = new REST(
+        if (!(this.list && this.app && this.guild))
+            return false;
+        
+        this.rest = new REST(
+            new (class {
+                version = "10";
+            })(),
+        ).setToken(tokens.djs);
+
+        this.rest
+            .put(
+                Routes.applicationGuildCommands(
+                    this.app,
+                    this.guild,
+                ),
                 new (class {
-                    version = "10";
-                })(),
-            ).setToken(tokens.djs);
+                    constructor(commandList) {
+                        this.body = commandList;
+                    }
+                })(this.list),
+            )
+            .then(function(comms) {
+                console.log(
+                    `Successfully reloaded ${comms.length} application (/) commands.`,
+                );
+            })
+            .catch(console.log);
 
-            this.rest
-                .put(
-                    Routes.applicationGuildCommands(
-                        this.app,
-                        this.guild,
-                    ),
-                    new (class {
-                        constructor(commandList) {
-                            this.body = commandList;
-                        }
-                    })(this.list),
-                )
-                .then(function(comms) {
-                    console.log(
-                        `Successfully reloaded ${comms.length} application (/) commands.`,
-                    );
-                })
-                .catch(console.log);
-
-            return true;
-        }
+        return true;
     }
 }
 
@@ -164,44 +165,47 @@ class BotEvents {
             constructor(interaction) {
                 this.interaction = interaction;
 
-                if (this.interaction.isChatInputCommand())
-                    if (this.interaction.commandName in new Commands()) {
-                        this.embeds = new new new Commands()
-                            [this.interaction.commandName]()
-                            .execute(this.interaction);
+                if (!this.interaction.isChatInputCommand())
+                    return;
 
-                        this.interaction
-                            .reply(new Message(
-                                this.embeds
-                                    .setTimestamp()
-                                    .setFooter(new Footer(
+                if (!(this.interaction.commandName in new Commands()))
+                    return;
+                
+                this.embeds = new new new Commands()
+                    [this.interaction.commandName]()
+                    .execute(this.interaction);
+
+                this.interaction
+                    .reply(new Message(
+                        this.embeds
+                            .setTimestamp()
+                            .setFooter(new Footer(
+                                this.interaction.time,
+                                performance.now(),
+                            ))
+                    ))
+                    .catch(function(error) {
+                        this.err = new Message(
+                            new EmbedBuilder()
+                                .setTitle("Error")
+                                .setDescription(error.toString())
+                                .setColor("Red")
+                                .setTimestamp()
+                                .setFooter(
+                                    new Footer(
                                         this.interaction.time,
                                         performance.now(),
-                                    ))
-                            ))
-                            .catch(function(error) {
-                                this.err = new Message(
-                                    new EmbedBuilder()
-                                        .setTitle("Error")
-                                        .setDescription(error.toString())
-                                        .setColor("Red")
-                                        .setTimestamp()
-                                        .setFooter(
-                                            new Footer(
-                                                this.interaction.time,
-                                                performance.now(),
-                                            ),
-                                        ),
-                                );
+                                    ),
+                                ),
+                        );
 
-                                if (
-                                    this.interaction.replied ||
-                                    this.interaction.deferred
-                                )
-                                    return this.interaction.followUp(this.err);
-                                else return this.interaction.reply(this.err);
-                            });
-                    }
+                        if (
+                            this.interaction.replied ||
+                            this.interaction.deferred
+                        )
+                            return this.interaction.followUp(this.err);
+                        else return this.interaction.reply(this.err);
+                    });
             }
         };
     };
@@ -224,26 +228,26 @@ new (class Main {
         //command initializers to discordjs api
         for (const commandUse in new Commands()) {
             this.command = new new Commands()[commandUse]();
-            if ("data" in this.command)
-                if ("execute" in this.command) {
-                    this.commandList.push(this.command.data.toJSON());
-                    this.client.commands.set(
-                        this.command.data.name,
-                        this.command,
-                    );
-                }
+            if (!("data" in this.command && "execute" in this.command))
+                return new Error(`CommandError: ${this.command} is missing either an "execute" or "data"`);
+            
+            this.commandList.push(this.command.data.toJSON());
+            this.client.commands.set(
+                this.command.data.name,
+                this.command,
+            );
         }
 
         //deploying datas from commands to the discordjs api
-        if (!new Deploy(this)) throw new Error("Failed to deploy commands");
+        if (!new Deploy(this))
+            throw new Error("Failed to deploy commands");
 
         //event initializer to start bot with
         for (const eventUse in new BotEvents())
             if (new new BotEvents()[eventUse]().once)
                 this.client.once(
                     new new BotEvents()[eventUse]().name,
-                    (...args) =>
-                        new new new BotEvents()[eventUse]().execute(...args)
+                    (...args) => new new new BotEvents()[eventUse]().execute(...args)
                 );
             else
                 this.client.on(
