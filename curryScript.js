@@ -1,18 +1,18 @@
-import {
-    Client,
-    Collection,
-    GatewayIntentBits,
-    SlashCommandBuilder,
-    EmbedBuilder,
-    Events,
-    REST,
-    Routes,
-} from "discord.js";
-import fs from "fs";
-import webSocket from "ws";
-import tokens from "./config.json" with { type: "json" };
-
 ((
+    //import modules
+    {
+        Client,
+        Collection,
+        GatewayIntentBits,
+        SlashCommandBuilder,
+        EmbedBuilder,
+        Events,
+        REST,
+        Routes,
+    } = require('discord.js'),
+    fs = require('fs'),
+    tokens = require('./config.json'),
+
     //main parameter initializer
     commandList = [],
     clientId = "763924189374840892",
