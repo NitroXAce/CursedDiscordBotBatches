@@ -48,13 +48,15 @@ function Editor() {
     //filter uneccesary properties
     //gather edited properties from callback to the json user
     this.userObj = new this.callback(this.obj[this.user]);
-    for (this.i in this.obj[this.user])
+    for (this.i in this.obj[this.user]) {
+        this.playerHold[this.playerHold.length] = this.i;
         for (this.j in this.userObj)
             if (this.i == this.j)
                 this.obj[this.user][this.i] = this.userObj[this.j];
             else if (this.j == 'bool')
                 this.bool = this.userObj[this.j];
             else continue;
+    }
 
     //append to the user file after
     //cleanup useless variables with KeepOnly, as empty

@@ -28,6 +28,7 @@ In **funcExpress.js**, this is what happens when you're allergic to EVERY keywor
  - **Hypothetical Boss:** This boss is **REALLY** flamboyant, very experessive!  So much so that statements, no longer appeases him anymore.  *"OnE StAtEmEnT i SHaLl I nEeD!"* - He said, probably.  So what does he suggest?  ABSOLUTELY NOTHING Statement wise, everything must be kept contained in expressions only!  Meaning no; var, let, const, if/else (except ternaries), switch/case (except using objects as an inefficient match condition), nor even for/while loops!  So what is left is... :,)
  - **Assignments:** Default Parameters inside of localized IIFEs
  - **Manipulate:** IIFEs and normal function stuff (and only **arrow** functions)
+>>>>>>> c882e1439bcc84e3b3fd6646dcc7aa964c6f4c3f
 
 ## CurryScript
 An attempt at making "object-less" funcitonal programming using callbacks and currying, in **curryScript.js**, its almost exactly that, currying, some spicy indian stew all over your computer screen!  Just waiting for you to get indigestion!  Its similar in vain to **funcExpress.js** as it still retains the allergies of keywords.
@@ -59,4 +60,8 @@ What I often hear when sharing this "beautiful" knowledge from various users is:
  - "**Why** are you **doing** this?!"
  - "What real world use case is this for?"
 
+<<<<<<< HEAD
+To which I reply "Good", and "Because it simply works!" because I am a curious Javascript developer, testing edge cases since I was younger, while I dont have ANY SINGLE EXPERIENCE IN TECH! I am however, just a paid factory laborer while fixing boats on the side.  I do this for fun first, and monetary value last.  My goal is to make people THINK about odd, out of the box thinking and how to impliment these cool ideas!  Even then, be consistent in writing styles so no one gets confused!  I am Gareth (a vtuber "Ace Tributon"), and I am glad to have blessed your eyeballs today!  Take your time to have a bit of therapy, some milk, and touch some grass!  Because I wont stop at just javascript...  Enjoy! >:3
+=======
 To which I reply **"Good"**, and **"Because it simply works!"** because I am a *curious* Javascript developer, testing edge cases since I was younger, while I dont have **ANY SINGLE EXPERIENCE IN TECH!** I am however, just a paid **factory laborer** while **fixing boats** *on the side.*  I do this for fun first, and monetary value last.  My goal is to make people THINK about odd, out of the box thinking and how to impliment these cool ideas!  Even then, be consistent in writing styles so no one gets confused!  I am Gareth (a vtuber "Ace Tributon"), and I am glad to have blessed your eyeballs today!  Take your time to have a bit of therapy, some milk, and touch some grass!  Because I wont stop at just javascript...  Enjoy! >:3
+>>>>>>> c882e1439bcc84e3b3fd6646dcc7aa964c6f4c3f
