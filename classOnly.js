@@ -170,14 +170,12 @@ class BotEvents {
 
                 if (!(this.interaction.commandName in new Commands()))
                     return;
-                
-                this.embeds = new new new Commands()
-                    [this.interaction.commandName]()
-                    .execute(this.interaction);
 
                 this.interaction
                     .reply(new Message(
-                        this.embeds
+                        new new new Commands()
+                            [this.interaction.commandName]()
+                            .execute(this.interaction)
                             .setTimestamp()
                             .setFooter(new Footer(
                                 this.interaction.time,
@@ -195,14 +193,11 @@ class BotEvents {
                                     new Footer(
                                         this.interaction.time,
                                         performance.now(),
-                                    ),
-                                ),
+                                    )
+                                )
                         );
 
-                        if (
-                            this.interaction.replied ||
-                            this.interaction.deferred
-                        )
+                        if ( this.interaction.replied || this.interaction.deferred )
                             return this.interaction.followUp(this.err);
                         else return this.interaction.reply(this.err);
                     });
@@ -232,10 +227,7 @@ new (class Main {
                 return new Error(`CommandError: ${this.command} is missing either an "execute" or "data"`);
             
             this.commandList.push(this.command.data.toJSON());
-            this.client.commands.set(
-                this.command.data.name,
-                this.command,
-            );
+            this.client.commands.set( this.command.data.name, this.command );
         }
 
         //deploying datas from commands to the discordjs api
