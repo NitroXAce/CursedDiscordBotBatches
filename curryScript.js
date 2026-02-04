@@ -60,8 +60,8 @@
             true
         ))(new REST({ version: "10" }).setToken(tokens.djs)),
 
-    commandList = {
-        ping: (interaction) =>
+    commandList = command => ({
+        ping: interaction =>
             interaction === "data"
                 ? new SlashCommandBuilder()
                       .setName("ping")
@@ -70,58 +70,74 @@
                       .setTitle("Pong!")
                       .setDescription("Pong!")
                       .setColor("Green"),
-        freebie: (interaction) =>
+        freebie: interaction =>
             interaction === "data"
                 ? new SlashCommandBuilder()
                       .setName("freebie")
                       .setDescription("Replies with a free item!")
                 : ((carry) => (
-                      editor(interaction.user.id, (user) =>
-                          (({ points: uPoints } = user, bool = false) => (
-                              (bool =
-                                  Date.now() > user.freebie + 3600000 &&
-                                  ((user.freebie = Date.now()),
-                                  (user.points +=
-                                      Math.round(Math.random() * 1000) + 500),
-                                  true)),
-                              (carry = new EmbedBuilder()
-                                  .setTitle("Freebie")
-                                  .setDescription(
-                                      bool
-                                          ? `You earned: ${user.points - uPoints}pts`
-                                          : "You already got a free item this hour!",
-                                  )
-                                  .setColor(bool ? "Green" : "Red"))
-                          ))(),
-                      ),
-                      carry
-                  ))(),
-    },
+                    editor(interaction.user.id, (user) =>
+                        (({ points: uPoints } = user, bool = false) => (
+                            bool = Date.now() > user.freebie + 3600000 && (
+                                user.freebie = Date.now(),
+                                user.points += Math.round(Math.random() * 1000) + 500,
+                                true
+                            ),
+                            carry = new EmbedBuilder()
+                                .setTitle("Freebie")
+                                .setDescription(
+                                    bool
+                                        ? `You earned: ${user.points - uPoints}pts`
+                                        : "You already got a free item this hour!",
+                                )
+                                .setColor(bool ? "Green" : "Red")
+                        ))(),
+                    ),
+                    carry
+                ))(),
+    })?.[command] ?? new Error(`CommandError: ${command} is not found, or used.`),
 
     eventsList = {
-        ready: (cb) =>
-            (
-                // once | event name
-                cb(true, Events.ClientReady),
-                //return execute function
-                (client) =>
-                    console.log(`Ready! Logged in as ${client.user.tag}`)
-            ),
-        interactionCreate: (cb) =>
-            (
-                // once | event name
-                cb(false, Events.InteractionCreate),
-                //return execute function
-                (interaction) =>
-                    interaction.isChatInputCommand() &&
-                    run(interaction.commandName)("data") &&
-                    interaction
-                        .reply(
+        ready: cb => (
+            // once | event name
+            cb(true, Events.ClientReady),
+            //return execute function
+            client => console.log(`Ready! Logged in as ${client.user.tag}`)
+        ),
+        interactionCreate: cb => (
+            // once | event name
+            cb(false, Events.InteractionCreate),
+            //return execute function
+            interaction =>
+                interaction.isChatInputCommand() &&
+                run(interaction.commandName)("data") &&
+                interaction
+                    .reply(
+                        message(
+                            run(
+                                interaction.commandName,
+                                commandList,
+                            )(interaction)
+                                .setTimestamp()
+                                .setFooter(
+                                    footer(
+                                        interaction.time,
+                                        performance.now(),
+                                    ),
+                                ),
+                        ),
+                    )
+                    .catch((error) =>
+                        interaction[
+                            interaction.replied || interaction.deferred
+                                ? "followUp"
+                                : "reply"
+                        ](
                             message(
-                                run(
-                                    interaction.commandName,
-                                    commandList,
-                                )(interaction)
+                                new EmbedBuilder()
+                                    .setTitle("Error")
+                                    .setDescription(error.toString())
+                                    .setColor("Red")
                                     .setTimestamp()
                                     .setFooter(
                                         footer(
@@ -130,29 +146,9 @@
                                         ),
                                     ),
                             ),
-                        )
-                        .catch((error) =>
-                            interaction[
-                                interaction.replied || interaction.deferred
-                                    ? "followUp"
-                                    : "reply"
-                            ](
-                                message(
-                                    new EmbedBuilder()
-                                        .setTitle("Error")
-                                        .setDescription(error.toString())
-                                        .setColor("Red")
-                                        .setTimestamp()
-                                        .setFooter(
-                                            footer(
-                                                interaction.time,
-                                                performance.now(),
-                                            ),
-                                        ),
-                                ),
-                            ),
-                        )
-            ),
+                        ),
+                    )
+        ),
     },
 
     //similar to command in obj
