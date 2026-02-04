@@ -61,40 +61,37 @@
         ))(new REST({ version: "10" }).setToken(tokens.djs)),
 
     commandList = command => ({
-        ping: interaction =>
-            interaction === "data"
-                ? new SlashCommandBuilder()
-                      .setName("ping")
-                      .setDescription("Replies with Pong!")
-                : new EmbedBuilder()
-                      .setTitle("Pong!")
-                      .setDescription("Pong!")
-                      .setColor("Green"),
-        freebie: interaction =>
-            interaction === "data"
-                ? new SlashCommandBuilder()
-                      .setName("freebie")
-                      .setDescription("Replies with a free item!")
-                : ((carry) => (
-                    editor(interaction.user.id, (user) =>
-                        (({ points: uPoints } = user, bool = false) => (
-                            bool = Date.now() > user.freebie + 3600000 && (
-                                user.freebie = Date.now(),
-                                user.points += Math.round(Math.random() * 1000) + 500,
-                                true
-                            ),
-                            carry = new EmbedBuilder()
-                                .setTitle("Freebie")
-                                .setDescription(
-                                    bool
-                                        ? `You earned: ${user.points - uPoints}pts`
-                                        : "You already got a free item this hour!",
-                                )
-                                .setColor(bool ? "Green" : "Red")
-                        ))(),
-                    ),
-                    carry
-                ))(),
+        ping: interaction => interaction === "data"
+            ? new SlashCommandBuilder()
+                .setName("ping")
+                .setDescription("Replies with Pong!")
+            : new EmbedBuilder()
+                .setTitle("Pong!")
+                .setDescription("Pong!")
+                .setColor("Green"),
+        freebie: interaction => interaction === "data"
+            ? new SlashCommandBuilder()
+                .setName("freebie")
+                .setDescription("Replies with a free item!")
+            : ((carry) => (
+                editor(interaction.user.id, (user) =>
+                    (({ points: uPoints } = user, bool = false) => (
+                        bool = Date.now() > user.freebie + 3600000 && (
+                            user.freebie = Date.now(),
+                            user.points += Math.round(Math.random() * 1000) + 500,
+                            true
+                        ),
+                        carry = new EmbedBuilder()
+                            .setTitle("Freebie")
+                            .setDescription( bool
+                                ? `You earned: ${user.points - uPoints}pts`
+                                : "You already got a free item this hour!",
+                            )
+                            .setColor(bool ? "Green" : "Red")
+                    ))(),
+                ),
+                carry
+            ))(),
     })?.[command] ?? new Error(`CommandError: ${command} is not found, or used.`),
 
     eventsList = {
