@@ -19,6 +19,14 @@
     guildId = "1219483237139746896",
     client = new Client({ intents: [GatewayIntentBits.Guilds] }),
 
+    //something to curry with
+    curryMatch = (index = '', curryObj) => (
+        Object.assign(curryObj,{ ''(){return Object.keys(this);} }),
+        index in curryObj || new Error('Parameter not found'),
+        typeof curryObj[index] != 'function' && new Error('Make sure you\'e assigning a function to this matcher object'),
+        curryObj[index]()
+    ),
+
     message = (embeds) => ({
         ephemeral: true,
         content: "",
@@ -60,20 +68,21 @@
             true
         ))(new REST({ version: "10" }).setToken(tokens.djs)),
 
-    commandList = command => ({
-        ping: interaction => interaction === "data"
-            ? new SlashCommandBuilder()
+    commandList = command => curryMatch(command,{
+        ping: call => curryMatch(call,{
+            data:()=> new SlashCommandBuilder()
                 .setName("ping")
-                .setDescription("Replies with Pong!")
-            : new EmbedBuilder()
+                .setDescription("Replies with Pong!"),
+            execute: interaction => new EmbedBuilder()
                 .setTitle("Pong!")
                 .setDescription("Pong!")
-                .setColor("Green"),
-        freebie: interaction => interaction === "data"
-            ? new SlashCommandBuilder()
+                .setColor("Green")
+        }),
+        freebie: call => curryMatch(call,{
+            data: ()=> new SlashCommandBuilder()
                 .setName("freebie")
-                .setDescription("Replies with a free item!")
-            : ((carry) => (
+                .setDescription("Replies with a free item!"),
+            execute : interaction => ((carry) => (
                 editor(interaction.user.id, (user) =>
                     (({ points: uPoints } = user, bool = false) => (
                         bool = Date.now() > user.freebie + 3600000 && (
@@ -85,14 +94,15 @@
                             .setTitle("Freebie")
                             .setDescription( bool
                                 ? `You earned: ${user.points - uPoints}pts`
-                                : "You already got a free item this hour!",
+                                : "You already got a free item this hour!"
                             )
                             .setColor(bool ? "Green" : "Red")
-                    ))(),
+                    ))()
                 ),
                 carry
-            ))(),
-    })?.[command] ?? new Error(`CommandError: ${command} is not found, or used.`),
+            ))()
+        })            
+    }),
 
     eventsList = {
         ready: cb => (
@@ -114,7 +124,8 @@
                             run(
                                 interaction.commandName,
                                 commandList,
-                            )(interaction)
+                            )
+                                (interaction)
                                 .setTimestamp()
                                 .setFooter(
                                     footer(
