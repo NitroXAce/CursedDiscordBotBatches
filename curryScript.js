@@ -79,23 +79,24 @@
             data: () => new SlashCommandBuilder()
                 .setName("freebie")
                 .setDescription("Replies with a free item!"),
-            execute : interaction => ((carry) => (
-                editor(interaction.user.id, (user) =>
-                    (({ points: uPoints } = user, bool = false) => (
-                        bool = Date.now() > user.freebie + 3600000 && (
-                            user.freebie = Date.now(),
-                            user.points += Math.round(Math.random() * 1000) + 500,
-                            true
-                        ),
-                        carry = new EmbedBuilder()
-                            .setTitle("Freebie")
-                            .setDescription( bool
-                                ? `You earned: ${user.points - uPoints}pts`
-                                : "You already got a free item this hour!"
-                            )
-                            .setColor(bool ? "Green" : "Red")
-                    ))()
-                ),
+            execute : interaction => (carry => (
+                editor(interaction.user.id, user => ((
+                    { points: uPoints } = user,
+                    bool = false
+                ) => (
+                    bool = Date.now() > user.freebie + 3600000 && (
+                        user.freebie = Date.now(),
+                        user.points += Math.round(Math.random() * 1000) + 500,
+                        true
+                    ),
+                    carry = new EmbedBuilder()
+                        .setTitle("Freebie")
+                        .setDescription( bool
+                            ? `You earned: ${user.points - uPoints}pts`
+                            : "You already got a free item this hour!"
+                        )
+                        .setColor(bool ? "Green" : "Red")
+                ))()),
                 carry
             ))()
         })            
@@ -112,18 +113,17 @@
             once: ()=> false,
             execute: interaction =>
                 interaction.isChatInputCommand() &&
-                run(interaction.commandName)("data") &&
+                commands(interaction.commandName)('data')() &&
                 interaction
                     .reply( message( 
-                        run(
-                            interaction.commandName,
-                            commandList,
-                        )
+                        commands
+                            (interaction.commandName)
+                            ('execute')
                             (interaction)
                             .setTimestamp()
                             .setFooter(footer(
-                                    interaction.time,
-                                    performance.now(),
+                                interaction.time,
+                                performance.now()
                             ))
                     ))
                     .catch((error) =>
@@ -138,31 +138,25 @@
                                     .setDescription(error.toString())
                                     .setColor("Red")
                                     .setTimestamp()
-                                    .setFooter(
-                                        footer(
-                                            interaction.time,
-                                            performance.now(),
-                                        ),
-                                    ),
-                            ),
-                        ),
+                                    .setFooter( footer(
+                                        interaction.time,
+                                        performance.now()
+                                    ))
+                            )
+                        )
                     )
         })
-    }),
-
-    //similar to command in obj
-    //eventually itll be run(command,obj)('data' || interaction)
-    run = (command, obj) => obj?.[command] ?? new Error("Command not found"),
+    })
 ) => (
-    (client.commands = new Collection()),
+    client.commands = new Collection(),
     //parsing commands to discordjs api
     commands('').forEach(command=>
         !!command &&
         commands(command)('data') &&
         commands(command)('execute') && (
-            commandList.push(commands(command)('data').toJSON()),
+            commandList.push(commands(command)('data')().toJSON()),
             client.commands.set(
-                commands(command)('data').name,
+                commands(command)('data')().name,
                 commands(command)
             )
         )
@@ -176,9 +170,9 @@
                 eventsList(event)('once')()
                 ? 'once' : 'on'
             ](
-                name,
+                eventsList(event)('data'),
                 (...args) => (
-                    (args[0].time = performance.now()),
+                    args[0].time = performance.now(),
                     eventsList(event)('execute')(...args)
                 )
             )
