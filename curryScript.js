@@ -21,10 +21,13 @@
 
     //something to curry with
     curryMatch = (index = '', curryObj) => (
-        Object.assign(curryObj,{ ''(){return Object.keys(this);} }),
-        index in curryObj || new Error('Parameter not found'),
-        typeof curryObj[index] != 'function' && new Error('Make sure you\'e assigning a function to this matcher object'),
-        curryObj[index]()
+        curryObj?.[''] ??
+            ( curryObj['']=()=>Object.keys(curryObj) ), 
+        index in curryObj ||
+            new Error('Parameter not found'),
+        typeof curryObj[index] == 'function' ||
+            new Error('Make sure you\'e assigning a function to this matcher object'),
+        curryObj[index]
     ),
 
     message = (embeds) => ({
@@ -41,12 +44,11 @@
     // Create a new client instance
     editor = (user, callback) =>
         ((obj = JSON.parse(fs.readFileSync("./users.json"))) => (
-            user in obj ||
-                (obj[user] = {
-                    points: 0,
-                    chat: 0,
-                    freebie: 0,
-                }),
+            user in obj || (obj[user] = {
+                points: 0,
+                chat: 0,
+                freebie: 0,
+            }),
             callback(obj[user]),
             fs.writeFileSync("./users.json", JSON.stringify(obj, "", 4))
         ))(),
@@ -55,22 +57,17 @@
     deploy = ({ commandList: list, clientId: app, guildId: guild }) =>
         list &&
         app &&
-        guild &&
-        ((rest) => (
-            rest
-                .put(Routes.applicationGuildrun(app, guild), { body: list })
-                .then((comms) =>
-                    console.log(
-                        `Successfully reloaded ${comms.length} application (/) commands.`,
-                    ),
-                )
-                .catch(console.log),
-            true
-        ))(new REST({ version: "10" }).setToken(tokens.djs)),
+        guild && new REST({ version: "10" })
+            .setToken(tokens.djs)
+            .put(Routes.applicationGuildrun(app, guild), { body: list })
+            .then(comms => console.log(
+                `Successfully reloaded ${comms.length} application (/) commands.`,
+            ))
+            .catch(console.error),
 
-    commandList = command => curryMatch(command,{
+    commands = command => curryMatch(command,{
         ping: call => curryMatch(call,{
-            data:()=> new SlashCommandBuilder()
+            data: () => new SlashCommandBuilder()
                 .setName("ping")
                 .setDescription("Replies with Pong!"),
             execute: interaction => new EmbedBuilder()
@@ -79,7 +76,7 @@
                 .setColor("Green")
         }),
         freebie: call => curryMatch(call,{
-            data: ()=> new SlashCommandBuilder()
+            data: () => new SlashCommandBuilder()
                 .setName("freebie")
                 .setDescription("Replies with a free item!"),
             execute : interaction => ((carry) => (
@@ -104,40 +101,34 @@
         })            
     }),
 
-    eventsList = {
-        ready: cb => (
-            // once | event name
-            cb(true, Events.ClientReady),
-            //return execute function
-            client => console.log(`Ready! Logged in as ${client.user.tag}`)
-        ),
-        interactionCreate: cb => (
-            // once | event name
-            cb(false, Events.InteractionCreate),
-            //return execute function
-            interaction =>
+    eventsList = events => curryMatch(events,{
+        ready: method => curryMatch(method ,{
+            data: ()=> Events.ClientReady,
+            once: ()=> true,
+            execute: client => console.log(`Ready! Logged in as ${client.user.tag}`)
+        }),
+        interactionCreate: method => curryMatch(method,{
+            data: ()=> Events.InteractionCreate,
+            once: ()=> false,
+            execute: interaction =>
                 interaction.isChatInputCommand() &&
                 run(interaction.commandName)("data") &&
                 interaction
-                    .reply(
-                        message(
-                            run(
-                                interaction.commandName,
-                                commandList,
-                            )
-                                (interaction)
-                                .setTimestamp()
-                                .setFooter(
-                                    footer(
-                                        interaction.time,
-                                        performance.now(),
-                                    ),
-                                ),
-                        ),
-                    )
+                    .reply( message( 
+                        run(
+                            interaction.commandName,
+                            commandList,
+                        )
+                            (interaction)
+                            .setTimestamp()
+                            .setFooter(footer(
+                                    interaction.time,
+                                    performance.now(),
+                            ))
+                    ))
                     .catch((error) =>
                         interaction[
-                            interaction.replied || interaction.deferred
+                            ( interaction.replied || interaction.deferred )
                                 ? "followUp"
                                 : "reply"
                         ](
@@ -156,8 +147,8 @@
                             ),
                         ),
                     )
-        ),
-    },
+        })
+    }),
 
     //similar to command in obj
     //eventually itll be run(command,obj)('data' || interaction)
@@ -165,30 +156,31 @@
 ) => (
     (client.commands = new Collection()),
     //parsing commands to discordjs api
-    Object.keys(commandList).forEach(
-        (command) =>
-            run(command, commandList)?.("data") &&
-            (commandList.push(run(command, commandList)("data").toJSON()),
+    commands('').forEach(command=>
+        !!command &&
+        commands(command)('data') &&
+        commands(command)('execute') && (
+            commandList.push(commands(command)('data').toJSON()),
             client.commands.set(
-                run(command, commandList)("data").name,
-                run(command, commandList),
-            )),
+                commands(command)('data').name,
+                commands(command)
+            )
+        )
     ),
     //deploy before continuing to events!
-    !deploy({ commandList, clientId, guildId })
+    !deploy()
         ? new Error("Failed to deploy commands")
-        : Object.keys(eventsList).forEach((events) =>
-              run(
-                  events,
-                  eventsList,
-              )?.((once, name) =>
-                  client[once ? "once" : "on"](
-                      name,
-                      (...args) => (
-                          (args[0].time = performance.now()),
-                          run(events, eventsList)(...args)
-                      ),
-                  ),
-              ),
-          )
+        : eventsList('').forEach(event=>
+            !!event &&
+            client[
+                eventsList(event)('once')()
+                ? 'once' : 'on'
+            ](
+                name,
+                (...args) => (
+                    (args[0].time = performance.now()),
+                    eventsList(event)('execute')(...args)
+                )
+            )
+        )
 ))();
