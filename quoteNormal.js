@@ -70,7 +70,7 @@ const message = (...embeds) => ({
 
 const footer = (timeBegin, timeEnd) => ({
     text: `Request done in ${
-        Math.ceil((this.self.timeEnd - this.self.timeBegin) * 1000) / 1000
+        Math.ceil((timeEnd - timeBegin) * 1000) / 1000
     }ms`,
     iconURL: "https://tenor.com/view/clock-gif-14609778"
 });
@@ -238,6 +238,6 @@ for (const eventUse in botEvents()) {
 }
 
 //client token
-client.login(this.tokens.djs);
+client.login(tokens.djs);
 
 function Twitch(){}
