@@ -59,8 +59,4 @@ What I often hear when sharing this "beautiful" knowledge from various users is:
  - "**Why** are you **doing** this?!"
  - "What real world use case is this for?"
 
-<<<<<<< HEAD
-To which I reply "Good", and "Because it simply works!" because I am a curious Javascript developer, testing edge cases since I was younger, while I dont have ANY SINGLE EXPERIENCE IN TECH! I am however, just a paid factory laborer while fixing boats on the side.  I do this for fun first, and monetary value last.  My goal is to make people THINK about odd, out of the box thinking and how to impliment these cool ideas!  Even then, be consistent in writing styles so no one gets confused!  I am Gareth (a vtuber "Ace Tributon"), and I am glad to have blessed your eyeballs today!  Take your time to have a bit of therapy, some milk, and touch some grass!  Because I wont stop at just javascript...  Enjoy! >:3
-=======
 To which I reply **"Good"**, and **"Because it simply works!"** because I am a *curious* Javascript developer, testing edge cases since I was younger, while I dont have **ANY SINGLE EXPERIENCE IN TECH!** I am however, just a paid **factory laborer** while **fixing boats** *on the side.*  I do this for fun first, and monetary value last.  My goal is to make people THINK about odd, out of the box thinking and how to impliment these cool ideas!  Even then, be consistent in writing styles so no one gets confused!  I am Gareth (a vtuber "Ace Tributon"), and I am glad to have blessed your eyeballs today!  Take your time to have a bit of therapy, some milk, and touch some grass!  Because I wont stop at just javascript...  Enjoy! >:3
->>>>>>> c882e1439bcc84e3b3fd6646dcc7aa964c6f4c3f
