@@ -1,5 +1,73 @@
 "use strict";
 
+//custom for loop
+class Loop {
+    function = class ObjLoop{
+        constructor(obj,cb){
+            this.obj = obj;
+            this.cb = cb;
+            this.keys = Object.keys(new this.obj());
+            this.k = this.keys.length -1;
+            new class Iterate {
+                true = class True{
+                    constructor(keys,k){
+                        new cb(class IteratorObjCallback{
+                            parent = new obj();
+                            keys = keys;
+                            keyName = keys[k];
+                            keyIndex = k;
+                            value = new obj()[keys[k]];
+                        });
+                        return new Iterate(keys,--k);
+                    }
+                };
+                false = class False{
+                    constructor(keys,k){
+                        return;
+                    }
+                };
+                constructor(keys,k){
+                    return new this[k > 0](keys,k);
+                }
+            }(this.keys,this.k);
+        }
+    };
+    number = class NumLoop{
+        constructor(num,cb){
+            this.num = num;
+            this.cb = cb;
+            this.k = this.num -1;
+            new class Iterate {
+                true = class True{
+                    constructor(k){
+                        new cb(k)
+                        return new Iterate(--k);
+                    }
+                };
+                false = class False{
+                    constructor(k){
+                        return;
+                    }
+                };
+                constructor(k){
+                    return new this[k > 0](k);
+                }
+            }(this.k);
+        }
+    };
+    constructor(parent,Callback){
+        return new class Check {
+            constructor(type,that){
+                //console.log(type,that);
+                this.number = that.number;
+                this.function = that.object;
+                this.object = that.object;
+                return new this[type](parent,Callback);
+            }
+        }(typeof parent,this);
+    }
+}
+
 import {
     Client,
     Collection,
@@ -21,13 +89,31 @@ class Editor {
     constructor(user, Callback) {
         this.user = user;
         this.obj = JSON.parse(fs.readFileSync("./users.json"));
+        this.obj = new class UserAssign {
+            true = class True{
+                constructor(u,o){
+                    return o;
+                }
+            }
+            false = class False{
+                constructor(u,o){
+                    this.user = u;
+                    this.obj = o;
+                    this.obj[this.user] = new (class {
+                        points = 0;
+                        chat = 0;
+                        freebie = 0;
+                    })();
 
-        if (!(this.user in this.obj))
-            this.obj[this.user] = new (class {
-                points = 0;
-                chat = 0;
-                freebie = 0;
-            })();
+                    o = this.obj;
+
+                    return o;
+                }
+            }
+            constructor(user,obj){
+                return new this[user in obj](user,obj);
+            }
+        }(this.user, this.obj);
 
         this.cb = new Callback(this.obj[this.user]);
         this.stringy = JSON.stringify(this.obj, "", 4);
@@ -83,16 +169,26 @@ class Commands {
                 this.user = new Editor(
                     this.interaction.user.id,
                     class Callback {
-                        constructor(jsonUser) {
-                            this.jsonUser = jsonUser;
-                            this.points = this.jsonUser.points;
-
-                            if (Date.now() > this.jsonUser.freebie + 3600000) {
+                        true = class True {
+                            constructor(jsonUser) {
+                                this.jsonUser = jsonUser;
                                 this.jsonUser.freebie = Date.now();
                                 this.jsonUser.points +=
                                     Math.round(Math.random() * 1000) + 500;
                                 this.bool = true;
                             }
+                        };
+                        false = class False {
+                            constructor(k) {
+                                return this.bool = false;
+                            }
+                        };
+                        constructor(jsonUser) {
+                            this.jsonUser = jsonUser;
+                            this.points = this.jsonUser.points;
+                            return new this[
+                                Date.now() > this.jsonUser.freebie + 3600000
+                            ](jsonUser)
                         }
                     },
                 );
@@ -207,6 +303,8 @@ class BotEvents {
     };
 }
 
+
+
 //self invoked class firing event IICE
 new (class Main {
     commandList = [];
@@ -222,7 +320,7 @@ new (class Main {
         this.client.commands = new Collection();
 
         //command initializers to discordjs api
-        for (const commandUse in new Commands()) {
+        /*for (const commandUse in new Commands()) {
             this.command = new new Commands()[commandUse]();
             if ("data" in this.command)
                 if ("execute" in this.command) {
@@ -232,7 +330,15 @@ new (class Main {
                         this.command,
                     );
                 }
-        }
+        }*/
+
+        new Loop(Commands,class Callback{
+            constructor(CommandOfCommands){
+                this.command = new new CommandOfCommands().value();
+                if("data" in this.command && 'execute' in this.command)
+                    new CommandOfCommands()
+            }
+        });
 
         //deploying datas from commands to the discordjs api
         if (!new Deploy(this)) throw new Error("Failed to deploy commands");

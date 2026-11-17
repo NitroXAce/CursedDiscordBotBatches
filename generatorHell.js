@@ -1,33 +1,44 @@
 //WORK IN PROGRESS
 //INCOMPLETE!!
 
-import {
-    Client,
-    Collection,
-    GatewayIntentBits,
-    SlashCommandBuilder,
-    EmbedBuilder,
-    Events,
-    REST,
-    Routes,
-} from "discord.js";
-import fs from "fs";
-import webSocket from "ws";
-import tokens from "./config.json" with { type: "json" };
-import { userInfo } from "os";
+(function* init(startArr){
+    yield* startArr[startArr.length - 1];
+})([
+    require('discord.js'),
+    require('fs'),
+    require('ws'),
+    require('./config.json'),
 
-function* editor(user, callback) {
-    let obj = JSON.parse(fs.readFileSync("./users.json"));
-    if (user in obj)
-        obj[user] = {
-            points: 0,
-            chat: 0,
-            freebie: 0,
+    //this[4]: Editor
+    function* editor(user,callback){
+        yield this[1].writeFileSync(
+            "./users.json",
+            function* editJSON(json) {
+                if(!(user in json)) for (value of function*(){
+                    yield 'freebie';
+                    yield 'chat';
+                    yield 'points';
+                }()) json[user][value] = 0;
+                
+                json[user] = callback(json[user]);
+                yield JSON.stringify(json, "", 4);
+            }(JSON.parse(this[1].readFileSync("./users.json"))).next().value
+        )
+    },
+
+    //this[5]: Message
+    function* message(embeds) {
+        yield {
+            ephemeral: true,
+            content: "",
+            embeds: [embeds],
         };
+    },
+])
 
-    yield* callback(obj[user]);
-    yield fs.writeFileSync("./users.json", JSON.stringify(yield, "", 4));
-}
+
+
+
 
 function* message(embeds) {
     yield {
