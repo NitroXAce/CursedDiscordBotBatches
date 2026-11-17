@@ -3,6 +3,17 @@
 
 "use strict";
 
+function proto(){
+    // parent prototype obj | even index: named arg, odd index: value
+    this.__proto__.parent = arguments[0];
+    this.__proto__.args = arguments[1];
+    for(this.__proto__.key in this.__proto__.args) this
+        .__proto__.parent
+        .__proto__[this.__proto__.key] = arguments[1][this.__proto__.key];
+    delete this.__proto__.key;
+    delete this.__proto__.args;
+}
+
 function OneInput(){
     this.__proto__.paramA = arguments[0];
 }
@@ -13,24 +24,28 @@ function TwoInput(){
 }
 
 function Message() {
-    Object.assign(this.__proto__,{
-        ephemeral:true,
-        content:"",
-        embeds:[arguments[0]]
+    new proto(this,{
+        ephemeral: true,
+        content: "",
+        embeds: [arguments[0]]
     });
 }
 
 function Commands(){
-    this.__proto__.data = new SlashCommandBuilder();
+    new proto(this,{
+        data: new SlashCommandBuilder()
+    });
 }
 
 function BotEvents(){
-    this.__proto__.once = false;
+    new proto(this,{
+        once: false
+    });
 }
 
 OneInput.prototype.Deploy = function Deploy(){
-    Object.assign(this.__proto__,{
-        carry: this.__proto__.paramA.carry,
+    new proto(this,{
+        carry: this.__proto__.paramA,
         list: this.carry.commandList,
         app: this.carry.app,
         guild: this.carry.guild
@@ -118,7 +133,7 @@ TwoInput.prototype.Editor = function Editor(){
     this.__proto__.stringy = JSON.stringify(this.__proto__.obj, "", 4);
     this.__proto__.fs.writeFileSync("./users.json", this.__proto__.stringy);
     new TwoInput(this.__proto__, ['bool', 'obj']).KeepOnly();
-}
+};
 
 TwoInput.prototype.Footer = function Footer(){
     this.__proto__.timeBegin = this.__proto__.paramA;
